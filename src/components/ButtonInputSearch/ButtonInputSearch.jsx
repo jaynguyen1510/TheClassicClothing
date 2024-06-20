@@ -22,6 +22,7 @@ function ButtonInputSearch({
                     backgroundColor: backgroundColorInput,
                     border: 'none',
                     borderTopRightRadius: 0,
+
                     borderBottomRightRadius: 0,
                 }}
             />

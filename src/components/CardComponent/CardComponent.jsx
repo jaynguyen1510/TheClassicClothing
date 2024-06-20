@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './CartComponent.module.scss';
+import styles from './CardComponent.module.scss';
 import classNames from 'classnames/bind';
 
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceText, WrapperReportText } from './style';
@@ -9,7 +9,7 @@ import imgOffice from '~/assets/images/office.png';
 
 const cx = classNames.bind(styles);
 
-const CartComponent = () => {
+const CardComponent = () => {
     return (
         <WrapperCardStyle
             hoverable
@@ -17,7 +17,10 @@ const CartComponent = () => {
             cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
         >
             <img src={imgOffice} alt="office" className={cx('office-img')} />
-            <StyleNameProduct>Quần ngắn</StyleNameProduct>
+
+            <div className={cx('wrapper-text-content')}>
+                <StyleNameProduct className={cx('text-content')}>Quần ngắn</StyleNameProduct>
+            </div>
             <WrapperReportText>
                 <span style={{ marginRight: '4px' }}>
                     <span>4.96</span>
@@ -33,4 +36,4 @@ const CartComponent = () => {
     );
 };
 
-export default CartComponent;
+export default CardComponent;

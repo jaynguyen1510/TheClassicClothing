@@ -16,9 +16,11 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: Helvetica Neue, Helvetica, Arial, 文泉驛正黑, WenQuanYi Zen Hei, Hiragino Sans GB, 儷黑 Pro, LiHei Pro,
+        Heiti TC, 微軟正黑體, Microsoft JhengHei UI, Microsoft JhengHei, sans-serif;
+
     font-size: 1.1rem;
-    line-height: 1.5;
+    line-height: 1.2;
     text-rendering: optimizeSpeed;
     color: var(--text-color);
     overflow-y: overlay;

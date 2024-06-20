@@ -1,0 +1,120 @@
+.wrapper-images {
+    padding: 1rem; /* 16px */
+    border-radius: 0.25rem; /* 4px */
+    background: rgba(244, 186, 186, 0.5);
+}
+
+.items {
+    padding-top: 0.625rem; /* 10px */
+    justify-content: space-between;
+}
+
+.wrapper-item {
+    flex-basis: unset;
+    display: flex;
+}
+
+.item-image {
+    height: 4rem !important; /* 64px */
+    width: 4rem !important; /* 64px */
+}
+
+.wrapper-content {
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 1.25rem; /* 20px */
+    font-weight: 500;
+    line-height: 1.5rem; /* 24px */
+    margin: 0;
+    max-height: 3rem; /* 48px */
+    max-width: 41.5625rem; /* 665px */
+    overflow: hidden;
+    overflow-wrap: break-word;
+    vertical-align: sub;
+}
+
+.content {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 500;
+    line-height: 1.5rem; /* 24px */
+    overflow-wrap: break-word;
+}
+
+.start-icon {
+    font-size: 0.75rem; /* 12px */
+    color: rgb(255, 196, 0);
+}
+
+.text-sell {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.5rem; /* 24px */
+    color: rgb(120, 120, 120);
+}
+
+.product-price {
+    background: rgb(250, 250, 250);
+    border-radius: 0.25rem; /* 4px */
+}
+
+.text-price {
+    font-size: 1.875rem; /* 30px */
+    line-height: 2.5rem; /* 40px */
+    font-weight: 500;
+    padding: 0.625rem; /* 10px */
+    margin-top: 0.625rem; /* 10px */
+    color: #ee4d2d;
+}
+
+.address {
+    text-decoration: underline;
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.5rem; /* 24px */
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.change-address {
+    cursor: pointer;
+    font-size: 1rem; /* 16px */
+    line-height: 1.5rem; /* 24px */
+    font-weight: 500;
+    color: rgb(238, 77, 45);
+    &:hover {
+        color: rgba(238, 77, 45, 0.5);
+    }
+}
+
+.wrapper-info {
+    margin: 0.625rem 0 1.25rem; /* 10px 0 20px */
+    padding: 0.625rem 0; /* 10px 0 */
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.wrapper-quality {
+    display: flex;
+    gap: 0.25rem; /* 4px */
+    align-items: center;
+    margin-left: 0.625rem; /* 10px */
+    width: 7.5rem; /* 120px */
+    border-radius: 0.25rem; /* 4px */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.icon-button {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+}
+
+.icon-plus {
+    font-size: 1.25rem; /* 20px */
+}
+
+.icon-min {
+    font-size: 1.25rem; /* 20px */
+}

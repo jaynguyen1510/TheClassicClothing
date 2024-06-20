@@ -1,0 +1,52 @@
+.wrapper-page {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(39, 39, 42, 0.7);
+}
+.wrapper-sign-page {
+    display: flex;
+    width: 800px;
+    height: 445px;
+    border-radius: 6px;
+    background-color: rgb(255, 228, 228);
+}
+
+.wrapper-text-light {
+    font-size: 13px;
+    cursor: pointer;
+    color: rgb(13, 92, 182);
+    &:hover {
+        color: rgba(13, 92, 182, 0.5);
+    }
+}
+
+.container-left {
+    flex: 1;
+    padding: 40px 45px 24px;
+    flex-direction: column;
+}
+
+.input-form {
+    margin-bottom: 10px;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    outline: none;
+    background-color: rgb(232, 240, 254);
+}
+
+.container-right {
+    width: 300px;
+    gap: 4px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(243, 215, 178, 0.8);
+}
+.logo-sign {
+    height: 203px !important;
+    width: 203px !important;
+}

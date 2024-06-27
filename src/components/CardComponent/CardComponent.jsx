@@ -29,7 +29,7 @@ const CardComponent = () => {
                 <span>| đã bán 1000</span>
             </WrapperReportText>
             <WrapperPriceText>
-                650.000
+                <span className={cx('text-price')}>650.000</span>
                 <WrapperDiscountText>-5%</WrapperDiscountText>
             </WrapperPriceText>
         </WrapperCardStyle>

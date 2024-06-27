@@ -1,9 +1,29 @@
-import React, { Fragment } from "react";
+import axios from "axios";
+import React, { Fragment, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { routes } from "./routes";
+import { useQuery } from "@tanstack/react-query";
+
+
 function App() {
+
+
+  // useEffect(() => {
+  //   fetchApi()
+  // }, [])
+
+  const fetchApi = async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/products/get-all`);
+      return res.data
+    } catch (error) {
+      console.error("API request failed: ", error);
+    }
+  };
+  const query = useQuery({ queryKey: ["todo"], queryFn: fetchApi })
+  console.log("query", query);
   return (
     <div>
       <Router>

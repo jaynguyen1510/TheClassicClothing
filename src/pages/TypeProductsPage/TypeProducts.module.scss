@@ -1,6 +1,12 @@
+.body {
+    width: 100%;
+    background: rgb(239, 239, 239);
+}
+
 .wrapper-fragment {
     padding: 0 120px;
-    background: #efefef;
+    width: 1270px;
+    margin: 0 auto;
 }
 
 .row-items {
@@ -12,22 +18,21 @@
     background-color: rgba(244, 186, 186, 1);
 }
 .items-bar {
-    padding: 10px;
+    padding-top: 10px;
     margin-right: 10px;
     margin-top: 20px;
-
+    width: 200px;
     border-radius: 4px;
     height: fit-content;
+    flex-wrap: nowrap;
     background: #fff;
 }
 .items-product {
     display: flex;
-    align-self: stretch;
     padding-bottom: 20px;
     margin-top: 20px;
     gap: 8px;
     flex-wrap: wrap;
-    grid-template-columns: repeat(6, 1fr);
 }
 .items-pagination {
     text-align: center;

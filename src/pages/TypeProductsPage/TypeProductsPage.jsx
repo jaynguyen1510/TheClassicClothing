@@ -12,25 +12,32 @@ const TypeProductsPage = () => {
         setCurrent(page);
     };
     return (
-        <div className={cx('wrapper-fragment')}>
-            <Row className={cx('row-items')}>
-                <Col span={4} className={cx('items-bar')}>
-                    <NavBarComponent />
-                </Col>
-                <Col span={20}>
-                    <Col className={cx('items-product')}>
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
-                        <CardComponent />
+        <div className={cx('body')}>
+            <div className={cx('wrapper-fragment')}>
+                <Row className={cx('row-items')}>
+                    <Col span={4} className={cx('items-bar')}>
+                        <NavBarComponent />
                     </Col>
-                    <Pagination current={current} onChange={onChange} total={100} className={cx('items-pagination')} />;
-                </Col>
-            </Row>
+                    <Col span={20}>
+                        <div className={cx('items-product')}>
+                            <CardComponent />
+                            <CardComponent />
+                            <CardComponent />
+                            <CardComponent />
+                            <CardComponent />
+                            <CardComponent />
+                            <CardComponent />
+                            <CardComponent />
+                        </div>
+                        <Pagination
+                            current={current}
+                            onChange={onChange}
+                            total={100}
+                            className={cx('items-pagination')}
+                        />
+                    </Col>
+                </Row>
+            </div>
         </div>
     );
 };

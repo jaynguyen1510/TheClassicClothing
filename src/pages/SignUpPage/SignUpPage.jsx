@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './SignUpPages.module.scss';
@@ -6,10 +6,13 @@ import styles from './SignUpPages.module.scss';
 import InputForm from '~/components/InputForm/InputForm';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 
+import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { Image } from 'antd';
 import Logo from '~/assets/images/TheClassic.png';
 const cx = classNames.bind(styles);
 const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', colorButton = '#fff' }) => {
+    const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isShowConfPassword, setIsShowConfPassword] = useState(false);
     return (
         <div className={cx('wrapper-page')}>
             <div className={cx('wrapper-sign-page')}>
@@ -17,8 +20,43 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
                     <h1>Xin chào</h1>
                     <p>Đăng nhập hoặc tạo tài khoản</p>
                     <InputForm className={cx('input-form')} placeholder="abc@gmail.com" />
-                    <InputForm className={cx('input-form')} placeholder="Nhập mật khẩu" />
-                    <InputForm className={cx('input-form')} placeholder="Nhập lại mật khẩu" />
+
+                    <div style={{ position: 'relative' }}>
+                        <span
+                            style={{
+                                zIndex: 10,
+                                position: 'absolute',
+                                top: '4px',
+                                right: '8px',
+                            }}
+                        >
+                            {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
+                        </span>
+                        <InputForm
+                            className={cx('input-form')}
+                            placeholder="Nhập mật khẩu"
+                            type={isShowPassword ? 'text' : 'password'}
+                        />
+                    </div>
+
+                    <div style={{ position: 'relative' }}>
+                        <span
+                            style={{
+                                zIndex: 10,
+                                position: 'absolute',
+                                top: '4px',
+                                right: '8px',
+                            }}
+                        >
+                            {isShowConfPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
+                        </span>
+
+                        <InputForm
+                            className={cx('input-form')}
+                            placeholder="Nhập lại mật khẩu"
+                            type={isShowConfPassword ? 'text' : 'password'}
+                        />
+                    </div>
 
                     <ButtonComponent
                         bordered={undefined}

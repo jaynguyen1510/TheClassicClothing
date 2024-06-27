@@ -6,6 +6,5 @@ export const WrapperTypeProduct = styled.div`
     align-items: center;
     gap:24px;
     justify-content:flex-start;
-    border-bottom: 1px solid rgb(244, 194, 194);
     height:44px;
 `

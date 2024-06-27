@@ -17,29 +17,33 @@ const HomePage = () => {
     const itemsClothings = ['Quần dài', 'Quần ngắn', 'Áo kiểu', 'Áo ba lỗ', 'Đầm', 'Khác'];
     return (
         <>
-            <div style={{ padding: '0 120px' }}>
+            <div style={{ width: '1270px', margin: '0 auto' }}>
                 <WrapperTypeProduct>
                     {itemsClothings.map((item) => {
                         return <TypeProduct key={item} name={item} />;
                     })}
                 </WrapperTypeProduct>
             </div>
-            <div className={cx('container')}>
-                <SliderComponents arrImages={allImages} />
-                <div className={cx('item-container')}>
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
+            <div className={cx('body')}>
+                <div className={cx('container')}>
+                    <SliderComponents arrImages={allImages} />
+                    <div className={cx('item-container')}>
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                    </div>
+                    <div className={cx('button-content')}>
+                        <ButtonComponent
+                            textButton="Xem thêm"
+                            type="outline"
+                            className={cx('button-border')}
+                            styleTextButton={{ fontWeight: '500' }}
+                        />
+                    </div>
+                    <NavBarComponent />
                 </div>
-                <div className={cx('button-content')}>
-                    <ButtonComponent
-                        textButton="Xem thêm"
-                        type="outline"
-                        className={cx('button-border')}
-                        styleTextButton={{ fontWeight: '500' }}
-                    />
-                </div>
-                <NavBarComponent />
             </div>
         </>
     );

@@ -1,18 +1,21 @@
 import React from 'react';
+import classNames from 'classnames/bind';
+import styles from './HeaderComponent.module.scss';
 
 import { Badge, Col } from 'antd';
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderSmall, WrapperTextHeader } from './style';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 
+const cx = classNames.bind(styles);
 function HeaderComponent() {
     return (
-        <div>
+        <div className={cx('wrapper-header')}>
             <WrapperHeader>
-                <Col span={6}>
+                <Col span={5}>
                     <WrapperTextHeader>The Classics</WrapperTextHeader>
                 </Col>
-                <Col span={12}>
+                <Col span={13}>
                     <ButtonInputSearch
                         size="large"
                         bordered={false}
@@ -21,7 +24,7 @@ function HeaderComponent() {
                         // onSearch={onSearch}
                     />
                 </Col>
-                <Col span={6} style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
                     <WrapperHeaderAccount>
                         <UserOutlined style={{ fontSize: '30px' }} />
                         <div>

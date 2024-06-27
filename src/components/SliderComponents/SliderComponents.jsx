@@ -1,6 +1,7 @@
-import { Image } from 'antd';
 import React from 'react';
-import Slider from 'react-slick';
+
+import { Image } from 'antd';
+import { StyledSlider } from './style';
 
 function SliderComponents({ arrImages, width = '100%', height = '550px' }) {
     const settings = {
@@ -12,12 +13,13 @@ function SliderComponents({ arrImages, width = '100%', height = '550px' }) {
         autoplay: true,
         autoplaySpeed: 2000,
     };
+
     return (
-        <Slider {...settings}>
+        <StyledSlider {...settings}>
             {arrImages.map((image, index) => (
                 <Image key={index} src={image} alt={`slide ${index}`} preview={false} width={width} height={height} />
             ))}
-        </Slider>
+        </StyledSlider>
     );
 }
 

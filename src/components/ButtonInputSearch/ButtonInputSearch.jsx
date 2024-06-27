@@ -22,7 +22,6 @@ function ButtonInputSearch({
                     backgroundColor: backgroundColorInput,
                     border: 'none',
                     borderTopRightRadius: 0,
-
                     borderBottomRightRadius: 0,
                 }}
             />
@@ -30,7 +29,7 @@ function ButtonInputSearch({
                 size={size}
                 icon={<SearchOutlined />}
                 style={{
-                    border: 'none',
+                    border: '1px solid rgba(255, 20, 147, 0.5)',
                     borderLeft: 'none',
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,

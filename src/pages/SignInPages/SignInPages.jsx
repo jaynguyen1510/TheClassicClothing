@@ -2,28 +2,59 @@ import React, { useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './SignInPages.module.scss';
+import * as UserService from '~/Services/UserService';
 
 import InputForm from '~/components/InputForm/InputForm';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
-import { Image } from 'antd';
-
-import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
-
 import Logo from '~/assets/images/TheClassic.png';
+
+import { Image } from 'antd';
+import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
+import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 
 const cx = classNames.bind(styles);
 const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', colorButton = '#fff' }) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const mutation = useMutationCustomHook((data) => UserService.loginUser(data));
+    const { data, isPending } = mutation;
+    console.log(mutation);
+    const handleOnChangeEmail = (e) => {
+        setEmail(e.target.value);
+    };
+
+    const handleOnChangePassword = (e) => {
+        setPassword(e.target.value);
+    };
+
+    const naviGate = useNavigate();
+    const handelNavigateRegister = () => {
+        naviGate('/sign-up');
+    };
+
+    const handelSignIn = () => {
+        mutation.mutate({ email, password });
+        console.log('submit', email, password);
+    };
     return (
         <div className={cx('wrapper-page')}>
             <div className={cx('wrapper-sign-page')}>
                 <div className={cx('container-left')}>
                     <h1>Xin chào</h1>
                     <p>Đăng nhập hoặc tạo tài khoản</p>
-                    <InputForm className={cx('input-form')} placeholder="abc@gmail.com" />
-
+                    <InputForm
+                        className={cx('input-form')}
+                        placeholder="abc@gmail.com"
+                        value={email}
+                        onChange={handleOnChangeEmail}
+                    />
                     <div style={{ position: 'relative' }}>
                         <span
+                            onClick={() => setIsShowPassword(!isShowPassword)}
                             style={{
                                 zIndex: 10,
                                 position: 'absolute',
@@ -37,28 +68,37 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
                             className={cx('input-form')}
                             placeholder="Nhập mật khẩu"
                             type={isShowPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={handleOnChangePassword}
                         />
                     </div>
-                    <ButtonComponent
-                        bordered={undefined}
-                        size={size}
-                        style={{
-                            height: '48px',
-                            width: '100%',
-                            margin: '26px 0 10px',
-                            border: 'none',
-                            borderRadius: '4px',
-                            backgroundColor: backgroundColorButton,
-                            color: colorButton,
-                        }}
-                        textButton={'Đăng nhập'}
-                    />
+                    {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
+                    <LoadingComponent isPending={isPending}>
+                        <ButtonComponent
+                            bordered={undefined}
+                            onClick={handelSignIn}
+                            disabled={!email.length || !password.length}
+                            size={size}
+                            style={{
+                                height: '48px',
+                                width: '100%',
+                                margin: '26px 0 10px',
+                                border: 'none',
+                                borderRadius: '4px',
+                                backgroundColor: !email.length || !password.length ? '#ccc' : backgroundColorButton,
+                                color: colorButton,
+                            }}
+                            textButton={'Đăng nhập'}
+                        />
+                    </LoadingComponent>
                     <p>
                         <span className={cx('wrapper-text-light')}>Quên mặt khẩu</span>{' '}
                     </p>
                     <p>
                         Chưa có tài khoản
-                        <span className={cx('wrapper-text-light')}>Tạo tài khoản</span>
+                        <span className={cx('wrapper-text-light')} onClick={handelNavigateRegister}>
+                            Tạo tài khoản
+                        </span>
                     </p>
                 </div>
                 <div className={cx('container-right')}>

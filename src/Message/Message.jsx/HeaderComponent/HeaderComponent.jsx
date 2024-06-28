@@ -6,9 +6,15 @@ import { Badge, Col } from 'antd';
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderSmall, WrapperTextHeader } from './style';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 function HeaderComponent() {
+    const naviGate = useNavigate();
+    const handelNavigateLogin = () => {
+        naviGate('/sign-in');
+    };
+
     return (
         <div className={cx('wrapper-header')}>
             <WrapperHeader>
@@ -27,7 +33,7 @@ function HeaderComponent() {
                 <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
                     <WrapperHeaderAccount>
                         <UserOutlined style={{ fontSize: '30px' }} />
-                        <div>
+                        <div onClick={handelNavigateLogin} style={{ cursor: 'pointer' }}>
                             <WrapperHeaderSmall>Login/register</WrapperHeaderSmall>
                             <div>
                                 <WrapperHeaderSmall>Account</WrapperHeaderSmall>

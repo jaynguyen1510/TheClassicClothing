@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@300&display=swap');
+
 .wrapper-page {
     height: 100vh;
     display: flex;
@@ -46,7 +48,18 @@
     align-items: center;
     background-color: rgba(243, 215, 178, 0.8);
 }
+
 .logo-sign {
     height: 203px !important;
     width: 203px !important;
+}
+.text-logo {
+    font-optical-sizing: auto;
+    font-family: 'Playwrite NZ', cursive;
+    text-align: center;
+    font-style: normal;
+    font-weight: 300;
+    margin: 0;
+    margin-top: 10px;
+    width: 100%;
 }

@@ -13,8 +13,10 @@ export const WrapperHeader = styled(Row)`
 export const WrapperTextHeader = styled.span`
   margin-left: 8px;
   font-size: 24px;
+  display: flex;
   align-items: center;
   color: #000;
+  font-family: 'Playfair Display', serif;
 `;
 
 export const WrapperHeaderAccount = styled.div`

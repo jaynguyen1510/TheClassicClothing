@@ -14,16 +14,16 @@ function App() {
   //   fetchApi()
   // }, [])
 
-  const fetchApi = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/products/get-all`);
-      return res.data
-    } catch (error) {
-      console.error("API request failed: ", error);
-    }
-  };
-  const query = useQuery({ queryKey: ["todo"], queryFn: fetchApi })
-  console.log("query", query);
+  // const fetchApi = async () => {
+  //   try {
+  //     const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/products/get-all`);
+  //     return res.data
+  //   } catch (error) {
+  //     console.error("API request failed: ", error);
+  //   }
+  // };
+  // const query = useQuery({ queryKey: ["todo"], queryFn: fetchApi })
+  // console.log("query", query);
   return (
     <div>
       <Router>

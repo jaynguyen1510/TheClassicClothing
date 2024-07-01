@@ -7,14 +7,16 @@ import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderSmall, WrapperTextHea
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 function HeaderComponent() {
     const naviGate = useNavigate();
+    const user = useSelector((state) => state.user);
     const handelNavigateLogin = () => {
         naviGate('/sign-in');
     };
-
+    console.log('user', user);
     return (
         <div className={cx('wrapper-header')}>
             <WrapperHeader>
@@ -33,13 +35,17 @@ function HeaderComponent() {
                 <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
                     <WrapperHeaderAccount>
                         <UserOutlined style={{ fontSize: '30px' }} />
-                        <div onClick={handelNavigateLogin} style={{ cursor: 'pointer' }}>
-                            <WrapperHeaderSmall>Login/register</WrapperHeaderSmall>
-                            <div>
-                                <WrapperHeaderSmall>Account</WrapperHeaderSmall>
-                                <CaretDownOutlined />
+                        {user?.name ? (
+                            <div style={{ cursor: 'pointer' }}>{user.name}</div>
+                        ) : (
+                            <div onClick={handelNavigateLogin} style={{ cursor: 'pointer' }}>
+                                <WrapperHeaderSmall>Login/register</WrapperHeaderSmall>
+                                <div>
+                                    <WrapperHeaderSmall>Account</WrapperHeaderSmall>
+                                    <CaretDownOutlined />
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </WrapperHeaderAccount>
                     <div>
                         <Badge count={4} size="small">

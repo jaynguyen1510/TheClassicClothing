@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './SignUpPages.module.scss';
@@ -7,6 +7,7 @@ import InputForm from '~/components/InputForm/InputForm';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 import Logo from '~/assets/images/TheClassic.png';
 import * as UserService from '~/Services/UserService';
+import * as Message from '~/components/Message/Message';
 
 import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { Image } from 'antd';
@@ -24,10 +25,21 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
     const [confirmPassword, setConfPassword] = useState('');
 
     const mutation = useMutationCustomHook((data) => UserService.signUpUser(data));
-    const { data, isPending } = mutation;
-    console.log('data', data);
+    const { data, isPending, isSuccess, isError } = mutation;
 
     const naviGate = useNavigate();
+    useEffect(() => {
+        if (isSuccess) {
+            Message.success();
+            handelNavigateLogin();
+        } else if (isError) {
+            Message.error();
+        }
+    }, [isSuccess, isError]);
+
+    const handelNavigateLogin = () => {
+        naviGate('/sign-in');
+    };
 
     const handleOnChangeEmail = (e) => {
         setEmail(e.target.value);
@@ -41,10 +53,6 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
         setConfPassword(e.target.value);
     };
 
-    const handelNavigateLogin = () => {
-        naviGate('/sign-in');
-    };
-
     const handleSignUp = () => {
         mutation.mutate({ email, password, confirmPassword });
         console.log('submit', email, password, confirmPassword);
@@ -53,8 +61,7 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
         <div className={cx('wrapper-page')}>
             <div className={cx('wrapper-sign-page')}>
                 <div className={cx('container-left')}>
-                    <h1>Xin chào</h1>
-                    <p>Tạo tài khoản</p>
+                    <h1>Đăng ký tài khoản</h1>
                     <InputForm
                         className={cx('input-form')}
                         placeholder="abc@gmail.com"

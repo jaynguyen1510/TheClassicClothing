@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './SignInPages.module.scss';
@@ -8,21 +8,45 @@ import InputForm from '~/components/InputForm/InputForm';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 import Logo from '~/assets/images/TheClassic.png';
 
+import { jwtDecode } from 'jwt-decode';
+import { routes } from '~/routes/index';
 import { Image } from 'antd';
 import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '~/redux/slides/userSlide';
 
 const cx = classNames.bind(styles);
 const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', colorButton = '#fff' }) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
 
     const mutation = useMutationCustomHook((data) => UserService.loginUser(data));
-    const { data, isPending } = mutation;
-    console.log(mutation);
+    const { data, isPending, isSuccess } = mutation;
+
+    useEffect(() => {
+        if (isSuccess) {
+            naviGate(routes[0].path);
+            localStorage.setItem('access_token', JSON.stringify(data?.access_token));
+            if (data?.access_token) {
+                const decoded = jwtDecode(data?.access_token);
+                console.log('decoded', decoded);
+                if (decoded?.id) {
+                    handelGetDetailsUser(decoded?.id, data?.access_token);
+                }
+            }
+        }
+    }, [isSuccess]);
+
+    const handelGetDetailsUser = async (id, token) => {
+        const res = await UserService.getDetailsUser(id, token);
+        dispatch(updateUser({ ...res?.data, access_token: token }));
+    };
+
     const handleOnChangeEmail = (e) => {
         setEmail(e.target.value);
     };
@@ -36,7 +60,7 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
         naviGate('/sign-up');
     };
 
-    const handelSignIn = () => {
+    const handleSignIn = () => {
         mutation.mutate({ email, password });
         console.log('submit', email, password);
     };
@@ -44,8 +68,7 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
         <div className={cx('wrapper-page')}>
             <div className={cx('wrapper-sign-page')}>
                 <div className={cx('container-left')}>
-                    <h1>Xin chào</h1>
-                    <p>Đăng nhập hoặc tạo tài khoản</p>
+                    <h1>Đăng nhập</h1>
                     <InputForm
                         className={cx('input-form')}
                         placeholder="abc@gmail.com"
@@ -76,7 +99,7 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
                     <LoadingComponent isPending={isPending}>
                         <ButtonComponent
                             bordered={undefined}
-                            onClick={handelSignIn}
+                            onClick={handleSignIn}
                             disabled={!email.length || !password.length}
                             size={size}
                             style={{

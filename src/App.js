@@ -28,7 +28,6 @@ function App() {
     let decoded = {};
     if (storageData && isJsonString(storageData)) {
       storageData = JSON.parse(storageData);
-      console.log("Parsed storageData", storageData);
       decoded = jwtDecode(storageData);
     }
     return { decoded, storageData };

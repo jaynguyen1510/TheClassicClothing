@@ -1,22 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './HeaderComponent.module.scss';
+import * as UserService from '~/Services/UserService';
 
-import { Badge, Col } from 'antd';
+import { Badge, Col, Popover } from 'antd';
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderSmall, WrapperTextHeader } from './style';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetUser } from '~/redux/slides/userSlide';
+import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 
 const cx = classNames.bind(styles);
+
 function HeaderComponent() {
     const naviGate = useNavigate();
     const user = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    const [isPending, setIsPending] = useState(false);
+
     const handelNavigateLogin = () => {
         naviGate('/sign-in');
     };
-    console.log('user', user);
+
+    const handleLogOut = async () => {
+        setIsPending(true);
+        localStorage.removeItem('access_token');
+        await UserService.logOutUser();
+        dispatch(resetUser());
+        setIsPending(false);
+    };
+
+    const content = (
+        <div>
+            <p className={cx('wrapper-content-popup')} onClick={handleLogOut}>
+                Đăng xuất
+            </p>
+            <p className={cx('wrapper-content-popup')}> Thông tin người dùng </p>
+        </div>
+    );
+
     return (
         <div className={cx('wrapper-header')}>
             <WrapperHeader>
@@ -33,20 +57,26 @@ function HeaderComponent() {
                     />
                 </Col>
                 <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
-                    <WrapperHeaderAccount>
-                        <UserOutlined style={{ fontSize: '30px' }} />
-                        {user?.name ? (
-                            <div style={{ cursor: 'pointer' }}>{user.name}</div>
-                        ) : (
-                            <div onClick={handelNavigateLogin} style={{ cursor: 'pointer' }}>
-                                <WrapperHeaderSmall>Login/register</WrapperHeaderSmall>
-                                <div>
-                                    <WrapperHeaderSmall>Account</WrapperHeaderSmall>
-                                    <CaretDownOutlined />
+                    <LoadingComponent isPending={isPending}>
+                        <WrapperHeaderAccount>
+                            <UserOutlined style={{ fontSize: '30px' }} />
+                            {user?.name ? (
+                                <>
+                                    <Popover content={content} trigger="click">
+                                        <div style={{ cursor: 'pointer' }}>{user.name}</div>
+                                    </Popover>
+                                </>
+                            ) : (
+                                <div onClick={handelNavigateLogin} style={{ cursor: 'pointer' }}>
+                                    <WrapperHeaderSmall>Login/register</WrapperHeaderSmall>
+                                    <div>
+                                        <WrapperHeaderSmall>Account</WrapperHeaderSmall>
+                                        <CaretDownOutlined />
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </WrapperHeaderAccount>
+                            )}
+                        </WrapperHeaderAccount>
+                    </LoadingComponent>
                     <div>
                         <Badge count={4} size="small">
                             <ShoppingCartOutlined style={{ fontSize: '30px', color: '#000' }} />

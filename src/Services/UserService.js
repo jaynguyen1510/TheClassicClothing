@@ -36,3 +36,15 @@ export const logOutUser = async () => {
         console.error('Error logging out:', error);
     }
 }
+export const updateUser = async (id, data, access_token) => {
+    try {
+        const res = await axiosJwt.put(`${process.env.REACT_APP_API_URL_BACKEND}/user/update-user/${id}`, data, {
+            headers: {
+                token: `Bearer ${access_token}`,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Error logging out:', error);
+    }
+}

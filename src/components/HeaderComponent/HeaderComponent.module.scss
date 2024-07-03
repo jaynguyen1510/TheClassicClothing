@@ -7,7 +7,12 @@
 .wrapper-content-popup {
     cursor: pointer;
     &:hover {
-        background-color: rgba(244, 186, 186, 0.5);
-        color: #fff;
+        color: rgba(244, 186, 186, 1);
     }
+}
+.avatar {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }

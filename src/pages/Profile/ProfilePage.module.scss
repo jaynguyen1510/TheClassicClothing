@@ -1,0 +1,43 @@
+.wrapper-profile {
+    width: 1270px;
+    margin: 0 auto;
+    height: 500px;
+}
+
+.wrapper-headers {
+    color: #000;
+    font-size: 18px;
+    margin: 4px 0;
+}
+.wrapper-content-profile {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 10px;
+    gap: 30px;
+    flex-direction: column;
+    border: 0.5px solid #ccc;
+}
+.wrapper-input {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.wrapper-label {
+    color: #000;
+    font-size: 12px;
+    line-height: 30px;
+    font-weight: 600;
+    width: 90px;
+    text-align: left;
+}
+.input-form {
+    width: 300px;
+}
+.avatar {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}

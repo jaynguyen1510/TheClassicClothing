@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './HeaderComponent.module.scss';
 import * as UserService from '~/Services/UserService';
@@ -23,6 +23,9 @@ function HeaderComponent() {
     const handelNavigateLogin = () => {
         naviGate('/sign-in');
     };
+    const handleProfileUser = () => {
+        naviGate('/profile-user');
+    };
 
     const handleLogOut = async () => {
         setIsPending(true);
@@ -37,7 +40,9 @@ function HeaderComponent() {
             <p className={cx('wrapper-content-popup')} onClick={handleLogOut}>
                 Đăng xuất
             </p>
-            <p className={cx('wrapper-content-popup')}> Thông tin người dùng </p>
+            <p className={cx('wrapper-content-popup')} onClick={handleProfileUser}>
+                Thông tin người dùng
+            </p>
         </div>
     );
 
@@ -59,11 +64,15 @@ function HeaderComponent() {
                 <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
                     <LoadingComponent isPending={isPending}>
                         <WrapperHeaderAccount>
-                            <UserOutlined style={{ fontSize: '30px' }} />
-                            {user?.name ? (
+                            {user ? (
+                                <img className={cx('avatar')} src={user?.avatar} alt="avatar" />
+                            ) : (
+                                <UserOutlined style={{ fontSize: '30px' }} />
+                            )}
+                            {user?.access_token ? (
                                 <>
                                     <Popover content={content} trigger="click">
-                                        <div style={{ cursor: 'pointer' }}>{user.name}</div>
+                                        <div style={{ cursor: 'pointer' }}>{user?.name || user?.email || 'User'}</div>
                                     </Popover>
                                 </>
                             ) : (

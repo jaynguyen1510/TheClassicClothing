@@ -14,7 +14,7 @@ import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 
 const cx = classNames.bind(styles);
 
-function HeaderComponent() {
+function HeaderComponent({ isHiddenSearch = false, isHiddenCart = true }) {
     const naviGate = useNavigate();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -25,6 +25,9 @@ function HeaderComponent() {
     };
     const handleProfileUser = () => {
         naviGate('/profile-user');
+    };
+    const handleAdminPage = () => {
+        naviGate('/system/admin');
     };
 
     const handleLogOut = async () => {
@@ -37,30 +40,37 @@ function HeaderComponent() {
 
     const content = (
         <div>
-            <p className={cx('wrapper-content-popup')} onClick={handleLogOut}>
-                Đăng xuất
-            </p>
             <p className={cx('wrapper-content-popup')} onClick={handleProfileUser}>
                 Thông tin người dùng
+            </p>
+            {user?.isAdmin && (
+                <p className={cx('wrapper-content-popup')} onClick={handleAdminPage}>
+                    Quản lý hệ thống
+                </p>
+            )}
+            <p className={cx('wrapper-content-popup')} onClick={handleLogOut}>
+                Đăng xuất
             </p>
         </div>
     );
 
     return (
         <div className={cx('wrapper-header')}>
-            <WrapperHeader>
+            <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
                 <Col span={5}>
                     <WrapperTextHeader>The Classics</WrapperTextHeader>
                 </Col>
-                <Col span={13}>
-                    <ButtonInputSearch
-                        size="large"
-                        bordered={false}
-                        textButton="Search"
-                        placeholder="Enter the clothes you are looking for"
-                        // onSearch={onSearch}
-                    />
-                </Col>
+                {!isHiddenSearch && (
+                    <Col span={13}>
+                        <ButtonInputSearch
+                            size="large"
+                            bordered={false}
+                            textButton="Search"
+                            placeholder="Enter the clothes you are looking for"
+                            // onSearch={onSearch}
+                        />
+                    </Col>
+                )}
                 <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
                     <LoadingComponent isPending={isPending}>
                         <WrapperHeaderAccount>
@@ -86,12 +96,14 @@ function HeaderComponent() {
                             )}
                         </WrapperHeaderAccount>
                     </LoadingComponent>
-                    <div>
-                        <Badge count={4} size="small">
-                            <ShoppingCartOutlined style={{ fontSize: '30px', color: '#000' }} />
-                        </Badge>
-                        <WrapperHeaderSmall>cart</WrapperHeaderSmall>
-                    </div>
+                    {!isHiddenCart && (
+                        <div>
+                            <Badge count={4} size="small">
+                                <ShoppingCartOutlined style={{ fontSize: '30px', color: '#000' }} />
+                            </Badge>
+                            <WrapperHeaderSmall>cart</WrapperHeaderSmall>
+                        </div>
+                    )}
                 </Col>
             </WrapperHeader>
         </div>

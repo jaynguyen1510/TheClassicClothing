@@ -9,7 +9,7 @@ import imgOffice from '~/assets/images/office.png';
 
 const cx = classNames.bind(styles);
 
-const CardComponent = () => {
+const CardComponent = ({ countInStock, description, image, name, price, rating, type, selled, discount }) => {
     return (
         <WrapperCardStyle
             hoverable
@@ -19,18 +19,18 @@ const CardComponent = () => {
             <img src={imgOffice} alt="office" className={cx('office-img')} />
 
             <div className={cx('wrapper-text-content')}>
-                <StyleNameProduct className={cx('text-content')}>Quần ngắn</StyleNameProduct>
+                <StyleNameProduct className={cx('text-content')}>{name}</StyleNameProduct>
             </div>
             <WrapperReportText>
                 <span style={{ marginRight: '4px' }}>
-                    <span>4.96</span>
+                    <span>{rating}</span>
                     <StarFilled style={{ fontSize: '12px', color: 'yellow' }} />
                 </span>
-                <span>| đã bán 1000</span>
+                <span>| đã bán {selled || 10000}</span>
             </WrapperReportText>
             <WrapperPriceText>
-                <span className={cx('text-price')}>650.000</span>
-                <WrapperDiscountText>-5%</WrapperDiscountText>
+                <span className={cx('text-price')}>{price}</span>
+                <WrapperDiscountText>{discount || 5}%</WrapperDiscountText>
             </WrapperPriceText>
         </WrapperCardStyle>
     );

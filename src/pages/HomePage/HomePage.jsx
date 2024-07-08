@@ -17,13 +17,10 @@ import { useQuery } from '@tanstack/react-query';
 const cx = classNames.bind(styles);
 
 const HomePage = () => {
-    // console.log(allImages);
-
     const itemsClothings = ['Quần dài', 'Quần ngắn', 'Áo kiểu', 'Áo ba lỗ', 'Đầm', 'Khác'];
 
     const fetchProductAll = async () => {
         const res = await ProductService.getAllProducts();
-        console.log('res', res);
         return res;
     };
 
@@ -33,7 +30,6 @@ const HomePage = () => {
         retry: 3,
         retryDelay: 1000,
     });
-    console.log('data', products);
 
     return (
         <>

@@ -14,7 +14,7 @@ import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 
 const cx = classNames.bind(styles);
 
-function HeaderComponent({ isHiddenSearch = false, isHiddenCart = true }) {
+function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const naviGate = useNavigate();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -74,7 +74,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = true }) {
                 <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}>
                     <LoadingComponent isPending={isPending}>
                         <WrapperHeaderAccount>
-                            {user ? (
+                            {user?.avatar ? (
                                 <img className={cx('avatar')} src={user?.avatar} alt="avatar" />
                             ) : (
                                 <UserOutlined style={{ fontSize: '30px' }} />

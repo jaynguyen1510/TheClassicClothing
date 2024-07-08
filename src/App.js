@@ -11,23 +11,22 @@ import { jwtDecode } from "jwt-decode";
 import { updateUser } from "./redux/slides/userSlide";
 import { LoadingComponent } from "./components/LoadingComponent/LoadingComponent";
 
-
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const user = useSelector((state) => state.user)
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     setIsLoading(true);
-    const { storageData, decoded } = handelDecoded();
+    const { storageData, decoded } = handleDecoded();
 
     if (decoded?.id) {
-      handelGetDetailsUser(decoded.id, storageData);
+      handleGetDetailsUser(decoded.id, storageData);
     }
     setIsLoading(false);
   }, []);
 
-  const handelDecoded = () => {
+  const handleDecoded = () => {
     let storageData = localStorage.getItem("access_token");
     let decoded = {};
     if (storageData && isJsonString(storageData)) {
@@ -37,19 +36,27 @@ function App() {
     return { decoded, storageData };
   };
 
+
   UserService.axiosJwt.interceptors.request.use(async function (config) {
-    const { decoded } = handelDecoded();
-    const currentTime = new Date()
-    if (decoded?.exp < currentTime.getTime() / 1000) {
-      const data = await UserService.refreshToken()
-      config.headers['token'] = `Bearer ${data?.access_token}`
+    try {
+      const { decoded, storageData } = handleDecoded();
+      if (decoded && storageData) {
+        const currentTime = new Date();
+        if (decoded?.exp < currentTime.getTime() / 1000) {
+          const data = await UserService.refreshToken();
+          config.headers['token'] = `Bearer ${data?.access_token}`;
+        }
+      }
+    } catch (error) {
+      console.error('Token refresh error:', error);
     }
     return config;
   }, (error) => {
-    return Promise.reject(error)
-  })
+    return Promise.reject(error);
+  });
 
-  const handelGetDetailsUser = async (id, token) => {
+
+  const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({ ...res?.data, access_token: token }));
   };

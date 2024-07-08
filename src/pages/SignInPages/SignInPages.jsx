@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import classNames from 'classnames/bind';
 import styles from './SignInPages.module.scss';
 import * as UserService from '~/Services/UserService';
@@ -15,7 +14,7 @@ import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '~/redux/slides/userSlide';
 
 const cx = classNames.bind(styles);
@@ -24,23 +23,25 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
 
     const mutation = useMutationCustomHook((data) => UserService.loginUser(data));
     const { data, isPending, isSuccess } = mutation;
 
+    const naviGate = useNavigate();
+
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess && data?.access_token) {
             naviGate(routes[0].path);
             localStorage.setItem('access_token', JSON.stringify(data?.access_token));
             if (data?.access_token) {
                 const decoded = jwtDecode(data?.access_token);
-                console.log('decoded', decoded);
                 if (decoded?.id) {
                     handelGetDetailsUser(decoded?.id, data?.access_token);
                 }
             }
         }
-    }, [isSuccess]);
+    }, [isSuccess, user]);
 
     const handelGetDetailsUser = async (id, token) => {
         const res = await UserService.getDetailsUser(id, token);
@@ -55,15 +56,19 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
         setPassword(e.target.value);
     };
 
-    const naviGate = useNavigate();
     const handelNavigateRegister = () => {
         naviGate('/sign-up');
     };
 
     const handleSignIn = () => {
-        mutation.mutate({ email, password });
-        console.log('submit', email, password);
+        try {
+            mutation.mutate({ email, password });
+        } catch (error) {
+            console.error('An error occurred while signing in:', error);
+            // Handle the error here, such as displaying an error message
+        }
     };
+
     return (
         <div className={cx('wrapper-page')}>
             <div className={cx('wrapper-sign-page')}>

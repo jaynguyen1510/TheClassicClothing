@@ -1,86 +1,75 @@
 import React, { useState } from 'react';
+import classNames from 'classnames/bind';
+import styles from './AdminPage.module.scss';
+
+import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
+import AdminUser from '~/components/AdminUser/AdminUser';
+import AdminProduct from '~/components/AdminProduct/AdminProduct';
 
 import { Menu } from 'antd';
 import { ProductFilled, UserOutlined } from '@ant-design/icons';
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
+import { StyledLabel } from './style';
+
+const cx = classNames.bind(styles);
 const items = [
     {
-        key: 'sub1',
-        label: 'Người dùng',
-        icon: <UserOutlined />,
-        children: [
-            {
-                key: '1',
-                label: 'Option 1',
-            },
-            {
-                key: '2',
-                label: 'Option 2',
-            },
-            {
-                key: '3',
-                label: 'Option 3',
-            },
-            {
-                key: '4',
-                label: 'Option 4',
-            },
-        ],
+        key: 'user',
+        label: <StyledLabel>Người dùng</StyledLabel>,
+        icon: (
+            <UserOutlined
+                style={{
+                    color: 'rgba(255, 182, 193, 1)',
+                }}
+            />
+        ),
     },
     {
-        key: 'sub2',
-        label: 'Sản phảm',
-        icon: <ProductFilled />,
-        children: [
-            {
-                key: '5',
-                label: 'Option 5',
-            },
-            {
-                key: '6',
-                label: 'Option 6',
-            },
-            {
-                key: 'sub3',
-                label: 'Submenu',
-                children: [
-                    {
-                        key: '7',
-                        label: 'Option 7',
-                    },
-                    {
-                        key: '8',
-                        label: 'Option 8',
-                    },
-                ],
-            },
-        ],
+        key: 'product',
+        label: <StyledLabel>Sản phẩm</StyledLabel>,
+        icon: (
+            <ProductFilled
+                style={{
+                    color: 'rgba(255, 182, 193, 1)',
+                }}
+            />
+        ),
     },
     {
         type: 'divider',
     },
 ];
+
 const AdminPage = () => {
     const [keySelected, setKeySelected] = useState('');
+
+    const renderPage = (key) => {
+        switch (key) {
+            case 'user':
+                return <AdminUser />;
+            case 'product':
+                return <AdminProduct />;
+            default:
+                return <div>Default Page</div>;
+        }
+    };
 
     const handleOnClick = (e) => {
         setKeySelected(e.key);
     };
+
     return (
         <>
             <HeaderComponent isHiddenSearch isHiddenCart />
             <div style={{ display: 'flex' }}>
                 <Menu
                     onClick={handleOnClick}
-                    style={{
-                        width: 256,
-                    }}
+                    className={cx('wrapper-menu')}
                     defaultSelectedKeys={['1']}
                     defaultOpenKeys={['sub1']}
                     mode="inline"
                     items={items}
                 />
-                <div style={{ flex: '1' }}>{keySelected === '6' && <span>{keySelected}</span>}</div>
+                <div className={cx('wrapper-page-admin')}>{renderPage(keySelected)}</div>
             </div>
         </>
     );

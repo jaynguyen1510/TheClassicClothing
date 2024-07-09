@@ -32,6 +32,7 @@ function App() {
     if (storageData && isJsonString(storageData)) {
       storageData = JSON.parse(storageData);
       decoded = jwtDecode(storageData);
+
     }
     return { decoded, storageData };
   };
@@ -40,7 +41,7 @@ function App() {
   UserService.axiosJwt.interceptors.request.use(async function (config) {
     try {
       const { decoded, storageData } = handleDecoded();
-      if (decoded && storageData) {
+      if (decoded && storageData && user) {
         const currentTime = new Date();
         if (decoded?.exp < currentTime.getTime() / 1000) {
           const data = await UserService.refreshToken();
@@ -57,8 +58,10 @@ function App() {
 
 
   const handleGetDetailsUser = async (id, token) => {
+
     const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({ ...res?.data, access_token: token }));
+
   };
 
   return (

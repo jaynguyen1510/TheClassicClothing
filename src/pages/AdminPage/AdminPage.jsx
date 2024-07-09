@@ -49,7 +49,7 @@ const AdminPage = () => {
             case 'product':
                 return <AdminProduct />;
             default:
-                return <div>Default Page</div>;
+                return <div>Welcome Admin go with The Classic</div>;
         }
     };
 

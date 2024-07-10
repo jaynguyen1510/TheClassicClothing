@@ -17,14 +17,19 @@ function App() {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    setIsLoading(true);
-    const { storageData, decoded } = handleDecoded();
 
-    if (decoded?.id) {
-      handleGetDetailsUser(decoded.id, storageData);
-    }
+    setIsLoading(true);
+    const fetchData = async () => {
+      const { storageData, decoded } = handleDecoded();
+      if (decoded?.id && user) {
+        await handleGetDetailsUser(decoded.id, storageData);
+      }
+
+    };
+    fetchData();
     setIsLoading(false);
   }, []);
+
 
   const handleDecoded = () => {
     let storageData = localStorage.getItem("access_token");
@@ -32,24 +37,20 @@ function App() {
     if (storageData && isJsonString(storageData)) {
       storageData = JSON.parse(storageData);
       decoded = jwtDecode(storageData);
-
     }
     return { decoded, storageData };
   };
 
 
   UserService.axiosJwt.interceptors.request.use(async function (config) {
-    try {
-      const { decoded, storageData } = handleDecoded();
-      if (decoded && storageData && user) {
-        const currentTime = new Date();
-        if (decoded?.exp < currentTime.getTime() / 1000) {
-          const data = await UserService.refreshToken();
-          config.headers['token'] = `Bearer ${data?.access_token}`;
-        }
+
+    const { decoded, storageData } = handleDecoded();
+    if (decoded && storageData) {
+      const currentTime = new Date();
+      if (decoded?.exp < currentTime.getTime() / 1000) {
+        const data = await UserService.refreshToken();
+        config.headers['token'] = `Bearer ${data?.access_token}`;
       }
-    } catch (error) {
-      console.error('Token refresh error:', error);
     }
     return config;
   }, (error) => {
@@ -58,11 +59,10 @@ function App() {
 
 
   const handleGetDetailsUser = async (id, token) => {
-
     const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({ ...res?.data, access_token: token }));
-
   };
+
 
   return (
     <div>

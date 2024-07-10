@@ -9,11 +9,12 @@ import * as ProductService from '~/Services/ProductService';
 import * as message from '~/components/Message/Message';
 
 import { Button, Form, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { getBase64 } from '~/ultils';
 import { WrapperUploadFile } from './style';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
+import { useQuery } from '@tanstack/react-query';
 
 const cx = classNames.bind(styles);
 
@@ -38,13 +39,62 @@ const AdminProduct = () => {
         countInStock: '',
     });
 
+    const [form] = Form.useForm();
+
     const mutation = useMutationCustomHook((data) => {
         const { name, type, price, description, image, countInStock, rating } = data;
         const res = ProductService.createProducts({ name, rating, type, countInStock, price, description, image });
         return res;
     });
 
+    const getAllProducts = async () => {
+        const res = await ProductService.getAllProducts();
+        return res;
+    };
+
     const { data, isPending, isSuccess, isError } = mutation;
+    const { isPending: isPendingProduct, data: products } = useQuery({
+        queryKey: ['products'],
+        queryFn: getAllProducts,
+    });
+    const renderAction = () => {
+        return (
+            <div>
+                <DeleteOutlined style={{ color: 'red', fontSize: '25px', cursor: 'pointer' }} />
+                <EditOutlined style={{ color: 'orange', fontSize: '25px', cursor: 'pointer' }} />
+            </div>
+        );
+    };
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            // eslint-disable-next-line jsx-a11y/anchor-is-valid
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            // eslint-disable-next-line jsx-a11y/anchor-is-valid
+            render: renderAction,
+        },
+    ];
+    const dataTable = products?.data.map((product) => ({
+        ...product,
+        key: product._id,
+    }));
 
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
@@ -66,6 +116,7 @@ const AdminProduct = () => {
             description: '',
             countInStock: '',
         });
+        form.resetFields();
     };
 
     const showModal = () => {
@@ -97,22 +148,24 @@ const AdminProduct = () => {
                     <PlusOutlined className={cx('wrapper-icon')} />
                 </Button>
                 <div className={cx('wrapper-table')}>
-                    <TableComponent />
+                    <TableComponent columns={columns} isPending={isPendingProduct} data={dataTable} />
                 </div>
                 <Modal
                     title="Thêm sản phẩm mới"
                     open={isModalOpen}
                     className={cx('modal-product')}
                     onCancel={handleCancel}
+                    footer={null}
                 >
                     <LoadingComponent isPending={isPending}>
                         <Form
                             name="AddProduct"
-                            labelCol={{ span: 8 }}
-                            wrapperCol={{ span: 16 }}
+                            labelCol={{ span: 6 }}
+                            wrapperCol={{ span: 18 }}
                             style={{ maxWidth: 600 }}
                             onFinish={handleOnFinish}
-                            autoComplete="off"
+                            autoComplete="on"
+                            form={form}
                         >
                             {formItems.map(({ label, name, message }) => (
                                 <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
@@ -134,12 +187,11 @@ const AdminProduct = () => {
                                     )}
                                 </WrapperUploadFile>
                             </Form.Item>
-                            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                                 <Button type="primary" htmlType="submit">
                                     Submit
                                 </Button>
                             </Form.Item>
-                            ;
                         </Form>
                     </LoadingComponent>
                 </Modal>

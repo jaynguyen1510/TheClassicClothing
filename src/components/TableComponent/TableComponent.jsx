@@ -1,50 +1,8 @@
 import React from 'react';
 import { Table } from 'antd';
+import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 
-const TableComponent = ({ selectionType = 'checkbox' }) => {
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            // eslint-disable-next-line jsx-a11y/anchor-is-valid
-            render: (text) => <a>{text}</a>,
-        },
-        {
-            title: 'Age',
-            dataIndex: 'age',
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-        },
-    ];
-    const data = [
-        {
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        },
-        {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        },
-        {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sydney No. 1 Lake Park',
-        },
-        {
-            key: '4',
-            name: 'Disabled User',
-            age: 99,
-            address: 'Sydney No. 1 Lake Park',
-        },
-    ];
-
+const TableComponent = ({ selectionType = 'checkbox', data = [], columns = [], products = [], isPending = false }) => {
     // rowSelection object indicates the need for row selection
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -57,14 +15,16 @@ const TableComponent = ({ selectionType = 'checkbox' }) => {
         }),
     };
     return (
-        <Table
-            rowSelection={{
-                type: selectionType,
-                ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={data}
-        />
+        <LoadingComponent isPending={isPending}>
+            <Table
+                rowSelection={{
+                    type: selectionType,
+                    ...rowSelection,
+                }}
+                columns={columns}
+                dataSource={data}
+            />
+        </LoadingComponent>
     );
 };
 

@@ -2,7 +2,14 @@ import React from 'react';
 import { Table } from 'antd';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 
-const TableComponent = ({ selectionType = 'checkbox', data = [], columns = [], products = [], isPending = false }) => {
+const TableComponent = ({
+    selectionType = 'checkbox',
+    data = [],
+    columns = [],
+    products = [],
+    isPending = false,
+    onRow,
+}) => {
     // rowSelection object indicates the need for row selection
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -23,6 +30,7 @@ const TableComponent = ({ selectionType = 'checkbox', data = [], columns = [], p
                 }}
                 columns={columns}
                 dataSource={data}
+                onRow={onRow}
             />
         </LoadingComponent>
     );

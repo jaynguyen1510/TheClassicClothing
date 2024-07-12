@@ -5,6 +5,8 @@ import styles from './AdminProduct.module.scss';
 
 import TableComponent from '../TableComponent/TableComponent';
 import InputComponent from '../InputComponent/InputComponent';
+import DrawerComponent from '../DrawerComponent/DrawerComponent';
+
 import * as ProductService from '~/Services/ProductService';
 import * as message from '~/components/Message/Message';
 
@@ -15,6 +17,7 @@ import { WrapperUploadFile } from './style';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
@@ -29,7 +32,22 @@ const AdminProduct = () => {
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+    const [rowSelected, setRowSelected] = useState('');
+    const [isPendingUpdate, setIsPendingUpdate] = useState(false);
+    const user = useSelector((state) => state?.user);
+
     const [sateProducts, setSateProducts] = useState({
+        name: '',
+        type: '',
+        price: '',
+        image: '',
+        rating: '',
+        description: '',
+        countInStock: '',
+    });
+
+    const [sateDetailsProducts, setSateDetailsProducts] = useState({
         name: '',
         type: '',
         price: '',
@@ -47,21 +65,74 @@ const AdminProduct = () => {
         return res;
     });
 
+    const mutationUpdate = useMutationCustomHook((data) => {
+        console.log('data', data);
+        const { id, token, ...rests } = data;
+        const res = ProductService.updateProduct(id, { ...rests }, token);
+        return res;
+    });
+
     const getAllProducts = async () => {
         const res = await ProductService.getAllProducts();
         return res;
     };
 
+    const getDetailsProduct = async (rowSelected) => {
+        const res = await ProductService.getDetailsProduct(rowSelected);
+        if (res?.data) {
+            setSateDetailsProducts({
+                name: res?.data?.name,
+                type: res?.data?.type,
+                price: res?.data?.price,
+                image: res?.data?.image,
+                rating: res?.data?.rating,
+                description: res?.data?.description,
+                countInStock: res?.data?.countInStock,
+            });
+        }
+        setIsPendingUpdate(false);
+    };
+
+    useEffect(() => {
+        form.setFieldsValue(sateDetailsProducts);
+    }, [form, sateDetailsProducts]);
+
+    useEffect(() => {
+        if (rowSelected) {
+            getDetailsProduct(rowSelected);
+        }
+    }, [rowSelected]);
+
+    const handleDetailsProducts = () => {
+        if (rowSelected) {
+            setIsPendingUpdate(true);
+            getDetailsProduct();
+        }
+        setIsOpenDrawer(true);
+    };
+
     const { data, isPending, isSuccess, isError } = mutation;
-    const { isPending: isPendingProduct, data: products } = useQuery({
+    const {
+        data: dataUpdated,
+        isPending: isPendingUpdated,
+        isSuccess: isSuccessUpdated,
+        isError: isErrorUpdated,
+    } = mutationUpdate;
+
+    const queryProduct = useQuery({
         queryKey: ['products'],
         queryFn: getAllProducts,
     });
+    const { isPending: isPendingProduct, data: products } = queryProduct;
+
     const renderAction = () => {
         return (
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '25px', cursor: 'pointer' }} />
-                <EditOutlined style={{ color: 'orange', fontSize: '25px', cursor: 'pointer' }} />
+                <EditOutlined
+                    style={{ color: 'orange', fontSize: '25px', cursor: 'pointer' }}
+                    onClick={handleDetailsProducts}
+                />
             </div>
         );
     };
@@ -103,7 +174,17 @@ const AdminProduct = () => {
         } else if (isError) {
             message.error();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSuccess]);
+    useEffect(() => {
+        if (isSuccessUpdated && data?.status === 'OK') {
+            message.success();
+            handleCloseDrawer();
+        } else if (isErrorUpdated) {
+            message.error();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccessUpdated]);
 
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -119,17 +200,50 @@ const AdminProduct = () => {
         form.resetFields();
     };
 
+    const handleCloseDrawer = () => {
+        setIsOpenDrawer(false);
+        setSateDetailsProducts({
+            name: '',
+            type: '',
+            price: '',
+            image: '',
+            rating: '',
+            description: '',
+            countInStock: '',
+        });
+        form.resetFields();
+    };
+
     const showModal = () => {
         setIsModalOpen(true);
     };
-    const handleOnFinish = () => {
-        mutation.mutate(sateProducts);
+    const handleOnFinishProducts = () => {
+        mutation.mutate(sateProducts, {
+            onSettled: () => {
+                queryProduct.refetch();
+            },
+        });
     };
-    const handleOnChange = (e, name) => {
+    const onUpdateProducts = () => {
+        mutationUpdate.mutate(
+            { id: rowSelected, token: user?.access_token, ...sateDetailsProducts },
+            {
+                onSettled: () => {
+                    queryProduct.refetch();
+                },
+            },
+        );
+    };
+
+    const handleOnChangeProduct = (e, name) => {
         setSateProducts({ ...sateProducts, [name]: e.target.value });
     };
 
-    const handleImage = async ({ fileList }) => {
+    const handleOnChangeDetailsProduct = (e, name) => {
+        setSateDetailsProducts({ ...sateDetailsProducts, [name]: e.target.value });
+    };
+
+    const handleImageProduct = async ({ fileList }) => {
         const file = fileList[0];
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
@@ -140,15 +254,37 @@ const AdminProduct = () => {
         });
     };
 
+    const handleImageDetails = async ({ fileList }) => {
+        const file = fileList[0];
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setSateDetailsProducts({
+            ...sateDetailsProducts,
+            image: file.preview,
+        });
+    };
+
     return (
         <div>
-            <h1 className={cx('wrapper-header')}>Quản lý thông tin đơn hàng</h1>
+            <h1 className={cx('wrapper-header')}>Quản lý thông tin sản phẩm</h1>
             <div className={cx('wrapper-content')}>
                 <Button className={cx('wrapper-button')} onClick={showModal}>
                     <PlusOutlined className={cx('wrapper-icon')} />
                 </Button>
                 <div className={cx('wrapper-table')}>
-                    <TableComponent columns={columns} isPending={isPendingProduct} data={dataTable} />
+                    <TableComponent
+                        columns={columns}
+                        isPending={isPendingProduct}
+                        data={dataTable}
+                        onRow={(record, rowIndex) => {
+                            return {
+                                onClick: (event) => {
+                                    setRowSelected(record._id);
+                                },
+                            };
+                        }}
+                    />
                 </div>
                 <Modal
                     title="Thêm sản phẩm mới"
@@ -163,7 +299,7 @@ const AdminProduct = () => {
                             labelCol={{ span: 6 }}
                             wrapperCol={{ span: 18 }}
                             style={{ maxWidth: 600 }}
-                            onFinish={handleOnFinish}
+                            onFinish={handleOnFinishProducts}
                             autoComplete="on"
                             form={form}
                         >
@@ -171,7 +307,7 @@ const AdminProduct = () => {
                                 <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
                                     <InputComponent
                                         value={sateProducts[name]}
-                                        onChange={(e) => handleOnChange(e, name)}
+                                        onChange={(e) => handleOnChangeProduct(e, name)}
                                     />
                                 </Form.Item>
                             ))}
@@ -180,7 +316,7 @@ const AdminProduct = () => {
                                 name="image"
                                 rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
                             >
-                                <WrapperUploadFile onChange={handleImage} maxCount={'1'}>
+                                <WrapperUploadFile onChange={handleImageProduct} maxCount={'1'}>
                                     <Button>Select file</Button>
                                     {sateProducts?.image && (
                                         <img className={cx('sate-products')} src={sateProducts?.image} alt="avatar" />
@@ -195,6 +331,54 @@ const AdminProduct = () => {
                         </Form>
                     </LoadingComponent>
                 </Modal>
+                <DrawerComponent
+                    title="Chi tiết sản phẩm"
+                    isOpen={isOpenDrawer}
+                    onCancel={handleCloseDrawer}
+                    onClose={() => setIsOpenDrawer(false)}
+                    width="80%"
+                >
+                    <LoadingComponent isPending={isPendingUpdate || isPendingUpdated}>
+                        <Form
+                            name="EditProductsForm"
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 22 }}
+                            onFinish={onUpdateProducts}
+                            autoComplete="on"
+                            form={form}
+                        >
+                            {formItems.map(({ label, name, message }) => (
+                                <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
+                                    <InputComponent
+                                        value={sateDetailsProducts[name]}
+                                        onChange={(e) => handleOnChangeDetailsProduct(e, name)}
+                                    />
+                                </Form.Item>
+                            ))}
+                            <Form.Item
+                                label="Hình ảnh"
+                                name="image"
+                                rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
+                            >
+                                <WrapperUploadFile onChange={handleImageDetails} maxCount={'1'}>
+                                    <Button>Select file</Button>
+                                    {sateDetailsProducts?.image && (
+                                        <img
+                                            className={cx('sate-products')}
+                                            src={sateDetailsProducts?.image}
+                                            alt="avatar"
+                                        />
+                                    )}
+                                </WrapperUploadFile>
+                            </Form.Item>
+                            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
+                                <Button type="primary" htmlType="submit">
+                                    Update
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </LoadingComponent>
+                </DrawerComponent>
             </div>
         </div>
     );

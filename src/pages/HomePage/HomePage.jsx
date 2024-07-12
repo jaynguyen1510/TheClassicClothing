@@ -2,7 +2,6 @@ import React from 'react';
 
 import SliderComponents from '../../components/SliderComponents/SliderComponents';
 import TypeProduct from '../../components/TypeProduct/TypeProduct';
-import NavBarComponent from '~/components/NavBarComponent/NavBarComponent';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 import CardComponent from '~/components/CardComponent/CardComponent';
 import * as ProductService from '~/Services/ProductService';

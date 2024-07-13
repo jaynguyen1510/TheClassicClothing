@@ -59,7 +59,9 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
     const handelNavigateRegister = () => {
         naviGate('/sign-up');
     };
-
+    const handleHomePage = () => {
+        naviGate('/');
+    };
     const handleSignIn = () => {
         try {
             mutation.mutate({ email, password });
@@ -130,7 +132,13 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
                     </p>
                 </div>
                 <div className={cx('container-right')}>
-                    <Image className={cx('logo-sign')} preview={false} src={Logo} alt="image-logo" />
+                    <Image
+                        className={cx('logo-sign')}
+                        onClick={handleHomePage}
+                        preview={false}
+                        src={Logo}
+                        alt="image-logo"
+                    />
                     <h4 className={cx('text-logo')}>Thỏa thức mua sắm cùng TheClassic</h4>
                 </div>
             </div>

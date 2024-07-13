@@ -18,6 +18,7 @@ import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
+import ModalComponent from '../ModalComponent/ModalComponent';
 
 const cx = classNames.bind(styles);
 
@@ -32,11 +33,22 @@ const AdminProduct = () => {
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isOpenModelDeleted, setIsOpenModelDeleted] = useState(false);
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [rowSelected, setRowSelected] = useState('');
     const [isPendingUpdate, setIsPendingUpdate] = useState(false);
+
+    const getAllProducts = async () => {
+        const res = await ProductService.getAllProducts();
+        return res;
+    };
     const user = useSelector((state) => state?.user);
 
+    const queryProduct = useQuery({
+        queryKey: ['products'],
+        queryFn: getAllProducts,
+    });
+    const { isPending: isPendingProduct, data: products } = queryProduct;
     const [sateProducts, setSateProducts] = useState({
         name: '',
         type: '',
@@ -65,17 +77,18 @@ const AdminProduct = () => {
         return res;
     });
 
-    const mutationUpdate = useMutationCustomHook((data) => {
-        console.log('data', data);
+    console.log('rowSelected: ', rowSelected);
+    const mutationUpdate = useMutationCustomHook(async (data) => {
         const { id, token, ...rests } = data;
-        const res = ProductService.updateProduct(id, { ...rests }, token);
+        const res = await ProductService.updateProduct(id, { ...rests }, token);
         return res;
     });
 
-    const getAllProducts = async () => {
-        const res = await ProductService.getAllProducts();
+    const mutationDeleted = useMutationCustomHook((data) => {
+        const { id, token } = data;
+        const res = ProductService.deleteProduct(id, token);
         return res;
-    };
+    });
 
     const getDetailsProduct = async (rowSelected) => {
         const res = await ProductService.getDetailsProduct(rowSelected);
@@ -99,15 +112,13 @@ const AdminProduct = () => {
 
     useEffect(() => {
         if (rowSelected) {
+            setIsPendingUpdate(true);
+
             getDetailsProduct(rowSelected);
         }
     }, [rowSelected]);
 
     const handleDetailsProducts = () => {
-        if (rowSelected) {
-            setIsPendingUpdate(true);
-            getDetailsProduct();
-        }
         setIsOpenDrawer(true);
     };
 
@@ -118,17 +129,20 @@ const AdminProduct = () => {
         isSuccess: isSuccessUpdated,
         isError: isErrorUpdated,
     } = mutationUpdate;
-
-    const queryProduct = useQuery({
-        queryKey: ['products'],
-        queryFn: getAllProducts,
-    });
-    const { isPending: isPendingProduct, data: products } = queryProduct;
+    const {
+        data: dataDeleted,
+        isPending: isPendingDeleted,
+        isSuccess: isSuccessDeleted,
+        isError: isErrorDeleted,
+    } = mutationDeleted;
 
     const renderAction = () => {
         return (
             <div>
-                <DeleteOutlined style={{ color: 'red', fontSize: '25px', cursor: 'pointer' }} />
+                <DeleteOutlined
+                    style={{ color: 'red', fontSize: '25px', cursor: 'pointer' }}
+                    onClick={() => setIsOpenModelDeleted(true)}
+                />
                 <EditOutlined
                     style={{ color: 'orange', fontSize: '25px', cursor: 'pointer' }}
                     onClick={handleDetailsProducts}
@@ -176,8 +190,19 @@ const AdminProduct = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSuccess]);
+
     useEffect(() => {
-        if (isSuccessUpdated && data?.status === 'OK') {
+        if (isSuccessDeleted && dataDeleted?.status === 'OK') {
+            message.success();
+            handleCancelDeleted();
+        } else if (isErrorDeleted) {
+            message.error();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccessDeleted]);
+
+    useEffect(() => {
+        if (isSuccessUpdated && dataUpdated?.status === 'OK') {
             message.success();
             handleCloseDrawer();
         } else if (isErrorUpdated) {
@@ -198,6 +223,20 @@ const AdminProduct = () => {
             countInStock: '',
         });
         form.resetFields();
+    };
+    const handleCancelDeleted = () => {
+        setIsOpenModelDeleted(false);
+    };
+    const handleDeletedProduct = () => {
+        console.log('Deleting:', rowSelected);
+        mutationDeleted.mutate(
+            { id: rowSelected, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryProduct.refetch();
+                },
+            },
+        );
     };
 
     const handleCloseDrawer = () => {
@@ -286,7 +325,7 @@ const AdminProduct = () => {
                         }}
                     />
                 </div>
-                <Modal
+                <ModalComponent
                     title="Thêm sản phẩm mới"
                     open={isModalOpen}
                     className={cx('modal-product')}
@@ -330,7 +369,7 @@ const AdminProduct = () => {
                             </Form.Item>
                         </Form>
                     </LoadingComponent>
-                </Modal>
+                </ModalComponent>
                 <DrawerComponent
                     title="Chi tiết sản phẩm"
                     isOpen={isOpenDrawer}
@@ -379,6 +418,17 @@ const AdminProduct = () => {
                         </Form>
                     </LoadingComponent>
                 </DrawerComponent>
+                <ModalComponent
+                    title="Xóa sản phẩm"
+                    open={isOpenModelDeleted}
+                    className={cx('modal-product')}
+                    onCancel={handleCancelDeleted}
+                    onOk={handleDeletedProduct}
+                >
+                    <LoadingComponent isPending={isPendingDeleted}>
+                        <div>Do you want delete this products ???</div>
+                    </LoadingComponent>
+                </ModalComponent>
             </div>
         </div>
     );

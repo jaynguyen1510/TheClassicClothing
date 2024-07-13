@@ -25,17 +25,17 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
     const [confirmPassword, setConfPassword] = useState('');
 
     const mutation = useMutationCustomHook((data) => UserService.signUpUser(data));
-    const { data, isPending, isSuccess, isError } = mutation;
+    const { data, isPending } = mutation;
 
     const naviGate = useNavigate();
     useEffect(() => {
-        if (isSuccess) {
+        if (data?.status === 'OK') {
             Message.success();
             handelNavigateLogin();
-        } else if (isError) {
+        } else if (data?.status === 'ERR') {
             Message.error();
         }
-    }, [isSuccess, isError]);
+    }, [data]);
 
     const handelNavigateLogin = () => {
         naviGate('/sign-in');
@@ -51,6 +51,9 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
 
     const handleOnChangeConfPassword = (e) => {
         setConfPassword(e.target.value);
+    };
+    const handleHomePage = () => {
+        naviGate('/');
     };
 
     const handleSignUp = () => {
@@ -143,7 +146,13 @@ const SignUpPage = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', col
                     </p>
                 </div>
                 <div className={cx('container-right')}>
-                    <Image className={cx('logo-sign')} preview={false} src={Logo} alt="image-logo" />
+                    <Image
+                        className={cx('logo-sign')}
+                        onClick={handleHomePage}
+                        preview={false}
+                        src={Logo}
+                        alt="image-logo"
+                    />
                     <h4 className={cx('text-logo')}>Thỏa thức mua sắm cùng TheClassic</h4>
                 </div>
             </div>

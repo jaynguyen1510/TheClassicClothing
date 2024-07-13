@@ -11,6 +11,7 @@ export const WrapperHeader = styled(Row)`
 `;
 
 export const WrapperTextHeader = styled.span`
+  cursor: pointer;
   margin-left: 8px;
   font-size: 24px;
   display: flex;

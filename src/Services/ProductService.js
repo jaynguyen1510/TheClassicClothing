@@ -29,3 +29,15 @@ export const updateProduct = async (id, data, access_token) => {
         console.error('Error updating product:', error);
     }
 };
+export const deleteProduct = async (id, access_token) => {
+    try {
+        const res = await axiosJwt.delete(`${process.env.REACT_APP_API_URL_BACKEND}/products/delete/${id}`, {
+            headers: {
+                token: `Bearer ${access_token}`,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Error delete product:', error);
+    }
+};

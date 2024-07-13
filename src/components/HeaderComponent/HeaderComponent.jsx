@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+
 import classNames from 'classnames/bind';
 import styles from './HeaderComponent.module.scss';
+
 import * as UserService from '~/Services/UserService';
+import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 
 import { Badge, Col, Popover } from 'antd';
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderSmall, WrapperTextHeader } from './style';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUser } from '~/redux/slides/userSlide';
@@ -28,6 +30,9 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     };
     const handleAdminPage = () => {
         naviGate('/system/admin');
+    };
+    const handleHomePages = () => {
+        naviGate('/');
     };
 
     const handleLogOut = async () => {
@@ -58,7 +63,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         <div className={cx('wrapper-header')}>
             <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
                 <Col span={5}>
-                    <WrapperTextHeader>The Classics</WrapperTextHeader>
+                    <WrapperTextHeader onClick={handleHomePages}>The Classics</WrapperTextHeader>
                 </Col>
                 {!isHiddenSearch && (
                     <Col span={13}>

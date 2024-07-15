@@ -11,11 +11,7 @@ const cx = classNames.bind(styles);
 
 const CardComponent = ({ countInStock, description, image, name, price, rating, type, selled, discount }) => {
     return (
-        <WrapperCardStyle
-            hoverable
-            className={cx('cartComponent')}
-            cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-        >
+        <WrapperCardStyle hoverable className={cx('cartComponent')} cover={<img alt="example" src={image} />}>
             <img src={imgOffice} alt="office" className={cx('office-img')} />
 
             <div className={cx('wrapper-text-content')}>

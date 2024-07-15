@@ -1,10 +1,11 @@
 export const isJsonString = (str) => {
     try {
         JSON.parse(str);
+        return true;
     } catch (e) {
         return false;
     }
-    return true;
+
 };
 export const getBase64 = (file) =>
     new Promise((resolve, reject) => {

@@ -24,7 +24,6 @@ function App() {
       if (decoded?.id && user) {
         await handleGetDetailsUser(decoded.id, storageData);
       }
-
     };
     fetchData();
     setIsLoading(false);

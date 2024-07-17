@@ -43,20 +43,22 @@ const HomePage = () => {
                 <div className={cx('container')}>
                     <SliderComponents arrImages={allImages} />
                     <div className={cx('item-container')}>
-                        {products?.data?.map((product) => (
-                            <CardComponent
-                                key={product._id}
-                                countInStock={product.countInStock}
-                                description={product.description}
-                                image={product.image}
-                                name={product.name}
-                                price={product.price}
-                                rating={product.rating}
-                                discount={product.discount}
-                                selled={product.selled}
-                                type={product.type}
-                            />
-                        ))}
+                        {products?.data
+                            ?.sort(() => Math.random() - 0.5)
+                            .map((product) => (
+                                <CardComponent
+                                    key={product._id}
+                                    countInStock={product.countInStock}
+                                    description={product.description}
+                                    image={product.image}
+                                    name={product.name}
+                                    price={product.price}
+                                    rating={product.rating}
+                                    discount={product.discount}
+                                    selled={product.selled}
+                                    type={product.type}
+                                />
+                            ))}
                     </div>
                     <div className={cx('button-content')}>
                         <ButtonComponent

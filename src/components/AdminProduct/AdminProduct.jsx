@@ -6,6 +6,7 @@ import styles from './AdminProduct.module.scss';
 import TableComponent from '../TableComponent/TableComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
+import ModalComponent from '../ModalComponent/ModalComponent';
 
 import * as ProductService from '~/Services/ProductService';
 import * as message from '~/components/Message/Message';
@@ -18,7 +19,6 @@ import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import ModalComponent from '../ModalComponent/ModalComponent';
 
 const cx = classNames.bind(styles);
 
@@ -445,125 +445,127 @@ const AdminProduct = () => {
                 <Button className={cx('wrapper-button')} onClick={showModal}>
                     <PlusOutlined className={cx('wrapper-icon')} />
                 </Button>
-                <div className={cx('wrapper-table')}>
-                    <TableComponent
-                        columns={columns}
-                        isPending={isPendingProduct}
-                        data={dataTable}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onClick: (event) => {
-                                    setRowSelected(record._id);
-                                },
-                            };
-                        }}
-                    />
-                </div>
-                <ModalComponent
-                    title="Thêm sản phẩm mới"
-                    open={isModalOpen}
-                    className={cx('modal-product')}
-                    onCancel={handleCancel}
-                    footer={null}
-                >
-                    <LoadingComponent isPending={isPending}>
-                        <Form
-                            name="AddProduct"
-                            labelCol={{ span: 6 }}
-                            wrapperCol={{ span: 18 }}
-                            style={{ maxWidth: 600 }}
-                            onFinish={handleOnFinishProducts}
-                            autoComplete="on"
-                            form={form}
-                        >
-                            {formItems.map(({ label, name, message }) => (
-                                <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
-                                    <InputComponent
-                                        value={sateProducts[name]}
-                                        onChange={(e) => handleOnChangeProduct(e, name)}
-                                    />
-                                </Form.Item>
-                            ))}
-                            <Form.Item
-                                label="Hình ảnh"
-                                name="image"
-                                rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
-                            >
-                                <WrapperUploadFile onChange={handleImageProduct} maxCount={'1'}>
-                                    <Button>Select file</Button>
-                                    {sateProducts?.image && (
-                                        <img className={cx('sate-products')} src={sateProducts?.image} alt="avatar" />
-                                    )}
-                                </WrapperUploadFile>
-                            </Form.Item>
-                            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </LoadingComponent>
-                </ModalComponent>
-                <DrawerComponent
-                    title="Chi tiết sản phẩm"
-                    isOpen={isOpenDrawer}
-                    onCancel={handleCloseDrawer}
-                    onClose={() => setIsOpenDrawer(false)}
-                    width="80%"
-                >
-                    <LoadingComponent isPending={isPendingUpdate || isPendingUpdated}>
-                        <Form
-                            name="EditProductsForm"
-                            labelCol={{ span: 3 }}
-                            wrapperCol={{ span: 22 }}
-                            onFinish={onUpdateProducts}
-                            autoComplete="on"
-                            form={form}
-                        >
-                            {formItems.map(({ label, name, message }) => (
-                                <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
-                                    <InputComponent
-                                        value={sateDetailsProducts[name]}
-                                        onChange={(e) => handleOnChangeDetailsProduct(e, name)}
-                                    />
-                                </Form.Item>
-                            ))}
-                            <Form.Item
-                                label="Hình ảnh"
-                                name="image"
-                                rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
-                            >
-                                <WrapperUploadFile onChange={handleImageDetails} maxCount={'1'}>
-                                    <Button>Select file</Button>
-                                    {sateDetailsProducts?.image && (
-                                        <img
-                                            className={cx('sate-products')}
-                                            src={sateDetailsProducts?.image}
-                                            alt="avatar"
-                                        />
-                                    )}
-                                </WrapperUploadFile>
-                            </Form.Item>
-                            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-                                <Button type="primary" htmlType="submit">
-                                    Update
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </LoadingComponent>
-                </DrawerComponent>
-                <ModalComponent
-                    title="Xóa sản phẩm"
-                    open={isOpenModelDeleted}
-                    className={cx('modal-product')}
-                    onCancel={handleCancelDeleted}
-                    onOk={handleDeletedProduct}
-                >
-                    <LoadingComponent isPending={isPendingDeleted}>
-                        <div>Do you want delete this products ???</div>
-                    </LoadingComponent>
-                </ModalComponent>
             </div>
+            <div className={cx('wrapper-table')}>
+                <TableComponent
+                    columns={columns}
+                    isPending={isPendingProduct}
+                    data={dataTable}
+                    onRow={(record, rowIndex) => {
+                        return {
+                            onClick: (event) => {
+                                setRowSelected(record._id);
+                            },
+                        };
+                    }}
+                />
+            </div>
+            <ModalComponent
+                forceRender
+                title="Thêm sản phẩm mới"
+                open={isModalOpen}
+                className={cx('modal-product')}
+                onCancel={handleCancel}
+                footer={null}
+            >
+                <LoadingComponent isPending={isPending}>
+                    <Form
+                        name="AddProduct"
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 18 }}
+                        style={{ maxWidth: 600 }}
+                        onFinish={handleOnFinishProducts}
+                        autoComplete="on"
+                        form={form}
+                    >
+                        {formItems.map(({ label, name, message }) => (
+                            <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
+                                <InputComponent
+                                    value={sateProducts[name]}
+                                    onChange={(e) => handleOnChangeProduct(e, name)}
+                                />
+                            </Form.Item>
+                        ))}
+                        <Form.Item
+                            label="Hình ảnh"
+                            name="image"
+                            rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
+                        >
+                            <WrapperUploadFile onChange={handleImageProduct} maxCount={'1'}>
+                                <Button>Select file</Button>
+                                {sateProducts?.image && (
+                                    <img className={cx('sate-products')} src={sateProducts?.image} alt="avatar" />
+                                )}
+                            </WrapperUploadFile>
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </LoadingComponent>
+            </ModalComponent>
+            <DrawerComponent
+                title="Chi tiết sản phẩm"
+                isOpen={isOpenDrawer}
+                onCancel={handleCloseDrawer}
+                onClose={() => setIsOpenDrawer(false)}
+                width="80%"
+            >
+                <LoadingComponent isPending={isPendingUpdate || isPendingUpdated}>
+                    <Form
+                        name="EditProductsForm"
+                        labelCol={{ span: 3 }}
+                        wrapperCol={{ span: 22 }}
+                        onFinish={onUpdateProducts}
+                        autoComplete="on"
+                        form={form}
+                    >
+                        {formItems.map(({ label, name, message }) => (
+                            <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
+                                <InputComponent
+                                    value={sateDetailsProducts[name]}
+                                    onChange={(e) => handleOnChangeDetailsProduct(e, name)}
+                                />
+                            </Form.Item>
+                        ))}
+                        <Form.Item
+                            label="Hình ảnh"
+                            name="image"
+                            rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
+                        >
+                            <WrapperUploadFile onChange={handleImageDetails} maxCount={'1'}>
+                                <Button>Select file</Button>
+                                {sateDetailsProducts?.image && (
+                                    <img
+                                        className={cx('sate-products')}
+                                        src={sateDetailsProducts?.image}
+                                        alt="avatar"
+                                    />
+                                )}
+                            </WrapperUploadFile>
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
+                            <Button type="primary" htmlType="submit">
+                                Update
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </LoadingComponent>
+            </DrawerComponent>
+            <ModalComponent
+                forceRender
+                title="Xóa sản phẩm"
+                open={isOpenModelDeleted}
+                className={cx('modal-product')}
+                onCancel={handleCancelDeleted}
+                onOk={handleDeletedProduct}
+            >
+                <LoadingComponent isPending={isPendingDeleted}>
+                    <div>Do you want delete this products ???</div>
+                </LoadingComponent>
+            </ModalComponent>
         </div>
     );
 };

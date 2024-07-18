@@ -99,6 +99,14 @@ const AdminProduct = () => {
         return res;
     });
 
+    const mutationManyDeleted = useMutationCustomHook((data) => {
+        const { token, ...ids } = data;
+        const res = ProductService.deleteManyProduct(ids, token);
+        return res;
+    });
+
+    console.log('mutationManyDeleted', mutationManyDeleted);
+
     const getDetailsProduct = async (rowSelected) => {
         const res = await ProductService.getDetailsProduct(rowSelected);
         if (res?.data) {
@@ -120,12 +128,12 @@ const AdminProduct = () => {
     }, [form, sateDetailsProducts]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsPendingUpdate(true);
 
             getDetailsProduct(rowSelected);
         }
-    }, [rowSelected]);
+    }, [rowSelected, isOpenDrawer]);
 
     const handleDetailsProducts = () => {
         setIsOpenDrawer(true);
@@ -144,7 +152,12 @@ const AdminProduct = () => {
         isSuccess: isSuccessDeleted,
         isError: isErrorDeleted,
     } = mutationDeleted;
-
+    const {
+        data: dataDeletedMany,
+        isPending: isPendingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationManyDeleted;
     const renderAction = () => {
         return (
             <div>
@@ -345,6 +358,15 @@ const AdminProduct = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSuccessUpdated, isErrorUpdated]);
 
+    useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccessDeletedMany]);
+
     const handleCancel = () => {
         setIsModalOpen(false);
         setSateProducts({
@@ -437,7 +459,16 @@ const AdminProduct = () => {
             image: file.preview,
         });
     };
-
+    const handleDeletedManyProduct = (_id) => {
+        mutationManyDeleted.mutate(
+            { ids: _id, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryProduct.refetch();
+                },
+            },
+        );
+    };
     return (
         <div>
             <h1 className={cx('wrapper-header')}>Quản lý thông tin sản phẩm</h1>
@@ -448,6 +479,7 @@ const AdminProduct = () => {
             </div>
             <div className={cx('wrapper-table')}>
                 <TableComponent
+                    handleDeletedMany={handleDeletedManyProduct}
                     columns={columns}
                     isPending={isPendingProduct}
                     data={dataTable}

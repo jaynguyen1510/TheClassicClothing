@@ -12,7 +12,7 @@ import * as UserService from '~/Services/UserService';
 import * as message from '~/components/Message/Message';
 
 import { Button, Form, Space } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { WrapperUploadFile } from './style';
 import { getBase64 } from '~/ultils';
@@ -74,6 +74,14 @@ const AdminUser = () => {
         return res;
     });
 
+    const mutationManyDeleted = useMutationCustomHook((data) => {
+        const { token, ...ids } = data;
+        const res = UserService.deleteManyUser(ids, token);
+        return res;
+    });
+
+    console.log('mutationManyDeleted', mutationManyDeleted);
+
     const getDetailsUser = async (rowSelected) => {
         const res = await UserService.getDetailsUser(rowSelected);
         if (res?.data) {
@@ -92,12 +100,12 @@ const AdminUser = () => {
     }, [form, sateDetailsUsers]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsPendingUpdate(true);
 
             getDetailsUser(rowSelected);
         }
-    }, [rowSelected]);
+    }, [rowSelected, isOpenDrawer]);
 
     const handleDetailsProducts = () => {
         setIsOpenDrawer(true);
@@ -115,6 +123,13 @@ const AdminUser = () => {
         isSuccess: isSuccessDeleted,
         isError: isErrorDeleted,
     } = mutationDeleted;
+
+    const {
+        data: dataDeletedMany,
+        isPending: isPendingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationManyDeleted;
 
     const renderAction = () => {
         return (
@@ -270,7 +285,16 @@ const AdminUser = () => {
             message.error();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSuccessDeleted, isErrorDeleted]);
+    }, [isSuccessDeleted]);
+
+    useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccessDeletedMany]);
 
     useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
@@ -280,7 +304,7 @@ const AdminUser = () => {
             message.error();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSuccessUpdated, isErrorUpdated]);
+    }, [isSuccessUpdated]);
 
     const handleCancelDeleted = () => {
         setIsOpenModelDeleted(false);
@@ -311,6 +335,17 @@ const AdminUser = () => {
     const onUpdateUser = () => {
         mutationUpdate.mutate(
             { id: rowSelected, token: user?.access_token, ...sateDetailsUsers },
+            {
+                onSettled: () => {
+                    queryUser.refetch();
+                },
+            },
+        );
+    };
+
+    const handleDeletedManyUser = (_id) => {
+        mutationManyDeleted.mutate(
+            { ids: _id, token: user?.access_token },
             {
                 onSettled: () => {
                     queryUser.refetch();
@@ -350,6 +385,7 @@ const AdminUser = () => {
             <h1 className={cx('wrapper-header')}>Quản lý thông tin người dùng </h1>
             <div className={cx('wrapper-table')}>
                 <TableComponent
+                    handleDeletedMany={handleDeletedManyUser}
                     columns={columns}
                     isPending={isPendingUsers}
                     data={dataTable}

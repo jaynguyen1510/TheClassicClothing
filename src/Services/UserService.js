@@ -55,7 +55,7 @@ export const updateUser = async (id, data, access_token) => {
 }
 
 export const getAllUser = async (access_token) => {
-    const res = await axiosJwt.get(`${process.env.REACT_APP_API_URL_BACKEND}/user/getAllUser`, {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/user/getAllUser`, {
         headers: {
             token: `Bearer ${access_token}`,
         }
@@ -72,6 +72,19 @@ export const deleteUser = async (id, data, access_token) => {
         });
         return res.data;
     } catch (error) {
-        console.error('Error logging out:', error);
+        console.error('Error deleteUser:', error);
+    }
+}
+
+export const deleteManyUser = async (data, access_token) => {
+    try {
+        const res = await axiosJwt.post(`${process.env.REACT_APP_API_URL_BACKEND}/user/delete-many-user`, data, {
+            headers: {
+                token: `Bearer ${access_token}`,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Error delete Many User:', error);
     }
 }

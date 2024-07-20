@@ -379,6 +379,7 @@ const AdminUser = () => {
             <div className={cx('wrapper-table')}>
                 <TableComponent
                     handleDeletedMany={handleDeletedManyUser}
+                    exportFileName={'Thông tin người dùng'}
                     columns={columns}
                     isPending={isPendingUsers}
                     data={dataTable}

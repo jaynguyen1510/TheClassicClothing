@@ -15,6 +15,7 @@ const TableComponent = ({
     isPending = false,
     onRow,
     handleDeletedMany,
+    exportFileName = 'Excel',
 }) => {
     const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
     const newColumnsExport = useMemo(() => {
@@ -36,6 +37,7 @@ const TableComponent = ({
         handleDeletedMany(rowSelectedKeys);
     };
     const exportExcel = () => {
+        const dynamicFileName = exportFileName || 'Excel';
         const excel = new Excel();
         excel
             .addSheet('test')
@@ -43,7 +45,7 @@ const TableComponent = ({
             .addDataSource(data, {
                 str2Percent: true,
             })
-            .saveAs('Excel.xlsx');
+            .saveAs(`${dynamicFileName}.xlsx`);
     };
 
     return (

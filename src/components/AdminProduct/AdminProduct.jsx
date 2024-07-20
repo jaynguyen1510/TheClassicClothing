@@ -480,6 +480,7 @@ const AdminProduct = () => {
             <div className={cx('wrapper-table')}>
                 <TableComponent
                     handleDeletedMany={handleDeletedManyProduct}
+                    exportFileName={'Thông tin sản phẩm'}
                     columns={columns}
                     isPending={isPendingProduct}
                     data={dataTable}

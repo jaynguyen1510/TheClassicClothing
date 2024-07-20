@@ -26,7 +26,7 @@ const CardComponent = ({ countInStock, description, image, name, price, rating, 
             </WrapperReportText>
             <WrapperPriceText>
                 <span className={cx('text-price')}>{price}</span>
-                <WrapperDiscountText>{discount || 5}%</WrapperDiscountText>
+                <WrapperDiscountText>sale {discount || 5}%</WrapperDiscountText>
             </WrapperPriceText>
         </WrapperCardStyle>
     );

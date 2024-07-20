@@ -26,6 +26,7 @@ const AdminUser = () => {
         { label: 'Tên sản phẩm', name: 'name', message: 'Vui lòng nhập tên sản phẩm' },
         { label: 'Địa chỉ Email', name: 'email', message: 'Vui lòng nhập email' },
         { label: 'Số điện thoại', name: 'phone', message: 'Vui lòng nhập phone' },
+        { label: 'Địa chỉ', name: 'address', message: 'Vui lòng nhập địa chỉ ' },
     ];
 
     const [isOpenModelDeleted, setIsOpenModelDeleted] = useState(false);
@@ -34,26 +35,11 @@ const AdminUser = () => {
     const [isPendingUpdate, setIsPendingUpdate] = useState(false);
 
     const searchInput = useRef(null);
-
-    const getAllUsers = async () => {
-        const res = await UserService.getAllUser();
-        return res;
-    };
     const user = useSelector((state) => state?.user);
 
-    const queryUser = useQuery({
-        queryKey: ['users'],
-        queryFn: getAllUsers,
-    });
-    const { isPending: isPendingUsers, data: users } = queryUser;
-    const [sateUsers, setSateUser] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        isAdmin: false,
-    });
-
     const [sateDetailsUsers, setSateDetailsUsers] = useState({
+        address: '',
+        avatar: '',
         name: '',
         email: '',
         phone: '',
@@ -80,6 +66,16 @@ const AdminUser = () => {
         return res;
     });
 
+    const getAllUsers = async () => {
+        const res = await UserService.getAllUser();
+        return res;
+    };
+
+    const queryUser = useQuery({
+        queryKey: ['users'],
+        queryFn: getAllUsers,
+    });
+
     console.log('mutationManyDeleted', mutationManyDeleted);
 
     const getDetailsUser = async (rowSelected) => {
@@ -90,6 +86,8 @@ const AdminUser = () => {
                 email: res?.data?.email,
                 phone: res?.data?.phone,
                 isAdmin: res?.data?.isAdmin,
+                address: res?.data?.address,
+                avatar: res?.data?.avatar,
             });
         }
         setIsPendingUpdate(false);
@@ -110,7 +108,7 @@ const AdminUser = () => {
     const handleDetailsProducts = () => {
         setIsOpenDrawer(true);
     };
-
+    const { isPending: isPendingUsers, data: users } = queryUser;
     const {
         data: dataUpdated,
         isPending: isPendingUpdated,
@@ -266,8 +264,14 @@ const AdminUser = () => {
             ...getColumnSearchProps('phone'),
         },
         {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            sorter: (a, b) => a.address.length - b.address.length,
+            ...getColumnSearchProps('address'),
+        },
+        {
             title: 'Action',
-            key: 'action',
+            dataIndex: 'action',
             render: renderAction,
         },
     ];
@@ -358,17 +362,6 @@ const AdminUser = () => {
         setSateDetailsUsers({ ...sateDetailsUsers, [name]: e.target.value });
     };
 
-    const handleImageUser = async ({ fileList }) => {
-        const file = fileList[0];
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setSateUser({
-            ...sateUsers,
-            image: file.preview,
-        });
-    };
-
     const handleImageDetails = async ({ fileList }) => {
         const file = fileList[0];
         if (!file.url && !file.preview) {
@@ -376,7 +369,7 @@ const AdminUser = () => {
         }
         setSateDetailsUsers({
             ...sateDetailsUsers,
-            image: file.preview,
+            avatar: file.preview,
         });
     };
 
@@ -423,18 +416,18 @@ const AdminUser = () => {
                                 />
                             </Form.Item>
                         ))}
-                        {/* <Form.Item
+                        <Form.Item
                             label="Hình ảnh"
-                            name="image"
+                            name="avatar"
                             rules={[{ required: true, message: 'Vui lòng chọn ảnh' }]}
                         >
                             <WrapperUploadFile onChange={handleImageDetails} maxCount={'1'}>
                                 <Button>Select file</Button>
-                                {sateDetailsUsers?.image && (
-                                    <img className={cx('sate-users')} src={sateDetailsUsers?.image} alt="avatar" />
+                                {sateDetailsUsers?.avatar && (
+                                    <img className={cx('avatar-users')} src={sateDetailsUsers?.avatar} alt="avatar" />
                                 )}
                             </WrapperUploadFile>
-                        </Form.Item> */}
+                        </Form.Item>
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
                                 Update

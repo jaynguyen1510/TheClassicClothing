@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+
+import classNames from 'classnames/bind';
+import styles from './TableComponent.module.scss';
+
 import { Table } from 'antd';
+import { Excel } from 'antd-table-saveas-excel';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 
+const cx = classNames.bind(styles);
 const TableComponent = ({
     selectionType = 'checkbox',
     data = [],
@@ -11,6 +17,10 @@ const TableComponent = ({
     handleDeletedMany,
 }) => {
     const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
+    const newColumnsExport = useMemo(() => {
+        const newColumns = columns?.filter((col) => col.dataIndex !== 'action');
+        return newColumns;
+    }, [columns]);
     // rowSelection object indicates the need for row selection
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -24,6 +34,16 @@ const TableComponent = ({
     };
     const handleDeleteAll = () => {
         handleDeletedMany(rowSelectedKeys);
+    };
+    const exportExcel = () => {
+        const excel = new Excel();
+        excel
+            .addSheet('test')
+            .addColumns(newColumnsExport)
+            .addDataSource(data, {
+                str2Percent: true,
+            })
+            .saveAs('Excel.xlsx');
     };
 
     return (
@@ -42,7 +62,12 @@ const TableComponent = ({
                     Xóa tất cả
                 </div>
             )}
+
+            <button onClick={exportExcel} className={cx('table-component')}>
+                Export
+            </button>
             <Table
+                id="table-xls"
                 rowSelection={{
                     type: selectionType,
                     ...rowSelection,

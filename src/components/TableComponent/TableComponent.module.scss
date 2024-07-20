@@ -1,0 +1,18 @@
+.table-component {
+    background-color: rgba(255, 182, 193, 1); /* Màu nền */
+    border: none; /* Bỏ viền */
+    color: #fff; /* Màu chữ */
+    padding: 10px 20px; /* Khoảng đệm */
+    text-align: center; /* Canh giữa */
+    text-decoration: none; /* Bỏ gạch chân */
+    display: inline-block; /* Hiển thị dạng khối nội tuyến */
+    font-size: 16px; /* Kích thước chữ */
+    margin: 4px 2px; /* Khoảng cách */
+    cursor: pointer; /* Con trỏ chuột */
+    transition-duration: 0.4s; /* Thời gian chuyển đổi */
+    border-radius: 4px; /* Bo góc */
+    &:hover {
+        background-color: rgba(244, 186, 186, 0.5); /* Màu nền khi hover */
+        color: fff; /* Màu chữ khi hover */
+    }
+}

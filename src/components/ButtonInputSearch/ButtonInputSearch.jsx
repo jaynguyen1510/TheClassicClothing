@@ -8,9 +8,11 @@ function ButtonInputSearch({
     placeholder,
     textButton,
     bordered,
+    onSearch,
     backgroundColorInput = '#fff',
     backgroundColorButton = 'rgba(244, 194, 194, 1)',
     colorButton = '#fff',
+    ...rests
 }) {
     return (
         <div style={{ display: 'flex' }}>
@@ -18,12 +20,14 @@ function ButtonInputSearch({
                 size={size}
                 placeholder={placeholder}
                 variant="borderless"
+                onChange={onSearch}
                 style={{
                     backgroundColor: backgroundColorInput,
                     border: 'none',
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                 }}
+                {...rests}
             />
             <ButtonComponent
                 size={size}

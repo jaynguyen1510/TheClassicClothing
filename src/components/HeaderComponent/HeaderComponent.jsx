@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUser } from '~/redux/slides/userSlide';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
+import { searchProduct } from '~/redux/slides/productSlide';
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +22,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const [isPending, setIsPending] = useState(false);
+    const [search, setSearch] = useState('');
 
     const handelNavigateLogin = () => {
         naviGate('/sign-in');
@@ -58,6 +60,10 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
             </p>
         </div>
     );
+    const onSearch = (e) => {
+        setSearch(e.target.value);
+        dispatch(searchProduct(e.target.value));
+    };
 
     return (
         <div className={cx('wrapper-header')}>
@@ -72,7 +78,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                             bordered={false}
                             textButton="Search"
                             placeholder="Enter the clothes you are looking for"
-                            // onSearch={onSearch}
+                            onSearch={onSearch}
                         />
                     </Col>
                 )}

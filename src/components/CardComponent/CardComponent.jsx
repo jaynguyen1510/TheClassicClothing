@@ -25,8 +25,8 @@ const CardComponent = ({ countInStock, description, image, name, price, rating, 
                 <span>| đã bán {selled || 10000}</span>
             </WrapperReportText>
             <WrapperPriceText>
-                <span className={cx('text-price')}>{price}</span>
-                <WrapperDiscountText>sale {discount || 5}%</WrapperDiscountText>
+                <span className={cx('text-price')}>{price.toLocaleString()} VNĐ</span>
+                <WrapperDiscountText>sale - {discount || 5}%</WrapperDiscountText>
             </WrapperPriceText>
         </WrapperCardStyle>
     );

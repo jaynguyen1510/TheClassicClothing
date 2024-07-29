@@ -30,8 +30,16 @@
     border: 1px solid rgba(244, 186, 186, 0.5);
     color: rgb(0, 0, 0);
     font-size: 16px;
+    cursor: pointer;
     &:hover {
         background-color: rgba(244, 186, 186, 0.5);
         color: #fff;
+    }
+    &.disabled {
+        color: #ccc;
+        cursor: not-allowed;
+        &:hover {
+            background-color: unset;
+        }
     }
 }

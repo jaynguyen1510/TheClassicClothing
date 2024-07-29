@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import SliderComponents from '../../components/SliderComponents/SliderComponents';
 import TypeProduct from '../../components/TypeProduct/TypeProduct';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 import CardComponent from '~/components/CardComponent/CardComponent';
+
 import * as ProductService from '~/Services/ProductService';
 
 import classNames from 'classnames/bind';
@@ -21,51 +22,49 @@ const cx = classNames.bind(styles);
 const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search);
     const searchDebounce = useDebounceCustomHook(searchProduct, 1000);
-    const refSearch = useRef();
-    const itemsClothings = ['Quần dài', 'Quần ngắn', 'Áo kiểu', 'Áo ba lỗ', 'Đầm', 'Khác'];
-    const [stateProduct, setStateProduct] = useState([]);
     const [loadingProduct, setLoadingProduct] = useState(false);
+    const [limit, setLimit] = useState(1);
+    const [buttonText, setButtonText] = useState('Xem thêm');
+    const itemsClothings = ['Quần dài', 'Quần ngắn', 'Áo kiểu', 'Áo ba lỗ', 'Đầm', 'Khác'];
 
-    const fetchProductAll = async (search) => {
-        let res = [];
-        if (search.length > 0 || refSearch.current) {
-            res = await ProductService.getAllProducts(search);
-            setStateProduct(res?.data);
-        } else {
-            res = await ProductService.getAllProducts();
-            return res;
-        }
+    const fetchProductAll = async (context) => {
+        const limited = context?.queryKey && context?.queryKey[1];
+        const search = (context?.queryKey && context?.queryKey[2]) || '';
+        const res = await ProductService.getAllProducts(search, limited);
+
+        return res;
     };
 
-    useEffect(() => {
-        if (refSearch.current) {
-            setLoadingProduct(true);
-            fetchProductAll(searchDebounce);
-        }
-        refSearch.current = true;
-        setLoadingProduct(false);
-    }, [searchDebounce]);
-
     const { isLoading, data: products } = useQuery({
-        queryKey: ['products'],
+        queryKey: ['products', limit, searchDebounce],
         queryFn: fetchProductAll,
         retry: 3,
         retryDelay: 1000,
+        keepPreviousData: true,
     });
 
+    const isDisabled = products?.total === products?.data?.length;
+    const isDisabledTotalPages = products?.totalPages === 1;
     useEffect(() => {
-        if (products?.data?.length > 0) {
-            setStateProduct(products?.data);
+        if (isDisabled || isDisabledTotalPages) {
+            setButtonText('Vui lòng chờ xíu nhen');
+            const timer = setTimeout(() => {
+                setButtonText('Đã xem hết');
+            }, 1500);
+            // Clean up timer
+            return () => clearTimeout(timer);
+        } else {
+            setButtonText('Xem thêm');
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [products]);
+    }, [isDisabled, isDisabledTotalPages]);
+
     return (
         <>
             <div style={{ width: '1270px', margin: '0 auto' }}>
                 <WrapperTypeProduct>
-                    {itemsClothings.map((item) => {
-                        return <TypeProduct key={item} name={item} />;
-                    })}
+                    {itemsClothings.map((item) => (
+                        <TypeProduct key={item} name={item} />
+                    ))}
                 </WrapperTypeProduct>
             </div>
             <div className={cx('body')}>
@@ -73,7 +72,7 @@ const HomePage = () => {
                     <SliderComponents arrImages={allImages} />
                     <LoadingComponent isPending={isLoading || loadingProduct}>
                         <div className={cx('item-container')}>
-                            {stateProduct
+                            {products?.data
                                 ?.sort(() => Math.random() - 0.5)
                                 .map((product) => (
                                     <CardComponent
@@ -93,10 +92,12 @@ const HomePage = () => {
                     </LoadingComponent>
                     <div className={cx('button-content')}>
                         <ButtonComponent
-                            textButton="Xem thêm"
+                            className={cx('button-border', { disabled: isDisabled || isDisabledTotalPages })}
+                            textButton={buttonText}
                             type="outline"
-                            className={cx('button-border')}
                             styleTextButton={{ fontWeight: '500' }}
+                            disabled={isDisabled || isDisabledTotalPages}
+                            onClick={() => setLimit((prev) => prev + 5)}
                         />
                     </div>
                 </div>

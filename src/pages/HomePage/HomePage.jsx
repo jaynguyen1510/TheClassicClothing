@@ -50,7 +50,7 @@ const HomePage = () => {
             setButtonText('Vui lòng chờ xíu nhen');
             const timer = setTimeout(() => {
                 setButtonText('Đã xem hết');
-            }, 1500);
+            }, 1000);
             // Clean up timer
             return () => clearTimeout(timer);
         } else {
@@ -76,6 +76,7 @@ const HomePage = () => {
                                 ?.sort(() => Math.random() - 0.5)
                                 .map((product) => (
                                     <CardComponent
+                                        id={product._id}
                                         key={product._id}
                                         countInStock={product.countInStock}
                                         description={product.description}

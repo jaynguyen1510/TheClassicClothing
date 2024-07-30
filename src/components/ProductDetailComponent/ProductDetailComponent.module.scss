@@ -68,6 +68,7 @@
 }
 
 .address {
+    cursor: pointer;
     text-decoration: underline;
     font-size: 0.9375rem; /* 15px */
     line-height: 1.5rem; /* 24px */
@@ -75,6 +76,9 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    &:hover {
+        color: rgba(238, 77, 45, 0.5);
+    }
 }
 
 .change-address {

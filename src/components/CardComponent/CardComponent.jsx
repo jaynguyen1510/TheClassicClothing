@@ -2,16 +2,26 @@ import React from 'react';
 
 import styles from './CardComponent.module.scss';
 import classNames from 'classnames/bind';
+import imgOffice from '~/assets/images/office.png';
 
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceText, WrapperReportText } from './style';
 import { StarFilled } from '@ant-design/icons';
-import imgOffice from '~/assets/images/office.png';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-const CardComponent = ({ countInStock, description, image, name, price, rating, type, selled, discount }) => {
+const CardComponent = ({ id, countInStock, description, image, name, price, rating, type, selled, discount }) => {
+    const navigate = useNavigate();
+    const handleDetailsProduct = (id) => {
+        navigate(`/product-detail/${id}`);
+    };
+
     return (
-        <WrapperCardStyle hoverable className={cx('cartComponent')} cover={<img alt="example" src={image} />}>
+        <WrapperCardStyle
+            hoverable
+            className={cx('cartComponent')}
+            cover={<img alt="example" src={image} onClick={() => handleDetailsProduct(id)} />}
+        >
             <img src={imgOffice} alt="office" className={cx('office-img')} />
 
             <div className={cx('wrapper-text-content')}>

@@ -3,6 +3,25 @@
     background: rgba(192, 192, 192, 0.3);
     height: 1000px;
 }
+.wrapper-home {
+    display: flex;
+    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+    gap: 8px; /* Khoảng cách giữa các phần tử */
+}
+
+.wrapper-text {
+    cursor: pointer;
+    &:hover {
+        color: rgba(244, 186, 186, 1);
+    }
+}
+.separator {
+    display: flex;
+    align-self: start;
+    font-size: 16px; /* Kích thước chữ cho dấu phân cách */
+    color: #888; /* Màu sắc cho dấu phân cách */
+}
+
 // .items-product {
 //     display: flex;
 //     background: rgba(244, 186, 186, 0.5);

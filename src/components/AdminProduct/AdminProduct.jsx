@@ -11,9 +11,9 @@ import ModalComponent from '../ModalComponent/ModalComponent';
 import * as ProductService from '~/Services/ProductService';
 import * as message from '~/components/Message/Message';
 
-import { Button, Form, Space } from 'antd';
+import { Button, Form, Select, Space } from 'antd';
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { getBase64 } from '~/ultils';
+import { getBase64, renderOptions } from '~/ultils';
 import { WrapperUploadFile } from './style';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
@@ -25,11 +25,10 @@ const cx = classNames.bind(styles);
 const AdminProduct = () => {
     const formItems = [
         { label: 'Tên sản phẩm', name: 'name', message: 'Vui lòng nhập tên sản phẩm' },
-        { label: 'Type', name: 'type', message: 'Vui lòng nhập type' },
-        { label: 'Price', name: 'price', message: 'Vui lòng nhập price' },
-        { label: 'rating', name: 'rating', message: 'Vui lòng nhập rating' },
-        { label: 'CountInStock', name: 'countInStock', message: 'Vui lòng nhập countInStock' },
-        { label: 'Description', name: 'description', message: 'Vui lòng nhập description' },
+        { label: 'Giá sản phẩm', name: 'price', message: 'Vui lòng nhập giá sản phẩm' },
+        { label: 'Đánh giá', name: 'rating', message: 'Vui lòng nhập đánh giá' },
+        { label: 'Số lượng sản phẩm', name: 'countInStock', message: 'Vui lòng nhập hàng còn trong kho' },
+        { label: 'Trạng thái', name: 'description', message: 'Vui lòng nhập trạng thái sản phẩm' },
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,19 +36,32 @@ const AdminProduct = () => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [rowSelected, setRowSelected] = useState('');
     const [isPendingUpdate, setIsPendingUpdate] = useState(false);
+    const [typeSelect, setTypeSelect] = useState('');
 
     const searchInput = useRef(null);
 
-    const getAllProducts = async () => {
+    const fetchAllProducts = async () => {
         const res = await ProductService.getAllProducts();
         return res;
+    };
+    const fetchAllTypeProducts = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        return res;
+        // if (res?.status === 'OK') {
+        // setTypeProducts(res?.data);
+        // }
     };
     const user = useSelector((state) => state?.user);
 
     const queryProduct = useQuery({
         queryKey: ['products'],
-        queryFn: getAllProducts,
+        queryFn: fetchAllProducts,
     });
+    const queryTypeProduct = useQuery({
+        queryKey: ['type-products'],
+        queryFn: fetchAllTypeProducts,
+    });
+
     const { isPending: isPendingProduct, data: products } = queryProduct;
     const [sateProducts, setSateProducts] = useState({
         name: '',
@@ -59,6 +71,7 @@ const AdminProduct = () => {
         rating: '',
         description: '',
         countInStock: '',
+        newType: '',
     });
 
     const [sateDetailsProducts, setSateDetailsProducts] = useState({
@@ -104,8 +117,6 @@ const AdminProduct = () => {
         const res = ProductService.deleteManyProduct(ids, token);
         return res;
     });
-
-    console.log('mutationManyDeleted', mutationManyDeleted);
 
     const getDetailsProduct = async (rowSelected) => {
         const res = await ProductService.getDetailsProduct(rowSelected);
@@ -261,13 +272,19 @@ const AdminProduct = () => {
 
     const columns = [
         {
-            title: 'Name',
+            title: 'Tên sản phẩm',
             dataIndex: 'name',
             sorter: (a, b) => a.name.length - b.name.length,
             ...getColumnSearchProps('name'),
         },
         {
-            title: 'Price',
+            title: 'Số lượng',
+            dataIndex: 'countInStock',
+            sorter: (a, b) => a.countInStock.length - b.countInStock.length,
+            ...getColumnSearchProps('countInStock'),
+        },
+        {
+            title: 'Giá',
             dataIndex: 'price',
             sorter: (a, b) => a.price - b.price,
             filters: [
@@ -289,7 +306,7 @@ const AdminProduct = () => {
             },
         },
         {
-            title: 'Rating',
+            title: 'Đánh giá',
             dataIndex: 'rating',
             sorter: (a, b) => a.rating - b.rating,
             filters: [
@@ -311,13 +328,13 @@ const AdminProduct = () => {
             },
         },
         {
-            title: 'Type',
+            title: 'Loại sản phẩm',
             dataIndex: 'type',
             sorter: (a, b) => a.type - b.type,
             ...getColumnSearchProps('type'),
         },
         {
-            title: 'Action',
+            title: 'Chỉnh sửa',
             dataIndex: 'action',
             // eslint-disable-next-line jsx-a11y/anchor-is-valid
             render: renderAction,
@@ -384,7 +401,6 @@ const AdminProduct = () => {
         setIsOpenModelDeleted(false);
     };
     const handleDeletedProduct = () => {
-        console.log('Deleting:', rowSelected);
         mutationDeleted.mutate(
             { id: rowSelected, token: user?.access_token },
             {
@@ -413,7 +429,16 @@ const AdminProduct = () => {
         setIsModalOpen(true);
     };
     const handleOnFinishProducts = () => {
-        mutation.mutate(sateProducts, {
+        const params = {
+            name: sateProducts.name,
+            type: sateProducts.type === 'add_type' ? sateProducts.newType : sateProducts.type,
+            price: sateProducts.price,
+            image: sateProducts.image,
+            rating: sateProducts.rating,
+            description: sateProducts.description,
+            countInStock: sateProducts.countInStock,
+        };
+        mutation.mutate(params, {
             onSettled: () => {
                 queryProduct.refetch();
             },
@@ -433,9 +458,17 @@ const AdminProduct = () => {
     const handleOnChangeProduct = (e, name) => {
         setSateProducts({ ...sateProducts, [name]: e.target.value });
     };
-
+    const handleOnChangeTypeProducts = (e) => {
+        setSateProducts({ ...sateProducts, newType: e.target.value });
+    };
     const handleOnChangeDetailsProduct = (e, name) => {
         setSateDetailsProducts({ ...sateDetailsProducts, [name]: e.target.value });
+    };
+    const handleChangeTypeProduct = (value) => {
+        setSateProducts({
+            ...sateProducts,
+            type: value,
+        });
     };
 
     const handleImageProduct = async ({ fileList }) => {
@@ -504,9 +537,9 @@ const AdminProduct = () => {
                 <LoadingComponent isPending={isPending}>
                     <Form
                         name="AddProduct"
-                        labelCol={{ span: 6 }}
+                        labelCol={{ span: 7 }}
                         wrapperCol={{ span: 18 }}
-                        style={{ maxWidth: 600 }}
+                        style={{ maxWidth: 1000 }}
                         onFinish={handleOnFinishProducts}
                         autoComplete="on"
                         form={form}
@@ -519,6 +552,31 @@ const AdminProduct = () => {
                                 />
                             </Form.Item>
                         ))}
+                        <Form.Item
+                            label="Loại sản phẩm"
+                            name="type"
+                            rules={[{ required: true, message: 'Vui lòng chọn Loại sản phẩm' }]}
+                        >
+                            <Select
+                                name="type"
+                                value={sateProducts.type}
+                                onChange={handleChangeTypeProduct}
+                                options={renderOptions(queryTypeProduct?.data?.data)}
+                            />
+                        </Form.Item>
+                        {sateProducts.type === 'add_type' && (
+                            <Form.Item
+                                label="Thêm loại sp"
+                                name="newType"
+                                rules={[{ required: true, message: 'Vui lòng chọn Loại sản phẩm' }]}
+                            >
+                                <InputComponent
+                                    value={sateProducts.newType}
+                                    onChange={handleOnChangeTypeProducts}
+                                    name="newType"
+                                />
+                            </Form.Item>
+                        )}
                         <Form.Item
                             label="Hình ảnh"
                             name="image"

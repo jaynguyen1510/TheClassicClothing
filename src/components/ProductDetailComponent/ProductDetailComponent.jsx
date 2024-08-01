@@ -61,6 +61,7 @@ const ProductDetailComponent = ({
     });
 
     const stars = productDetails?.rating;
+    console.log('productDetails', productDetails);
 
     return (
         <LoadingComponent isPending={isLoading}>
@@ -82,11 +83,13 @@ const ProductDetailComponent = ({
                 </Col>
                 <Col span={14} style={{ paddingLeft: '10px' }}>
                     <div className={cx('wrapper-content')}>
-                        <span className={cx('content')}> [Sẵn Hàng] {productDetails?.name} </span>
+                        <span className={cx('content')}>
+                            [{productDetails?.description}] , {productDetails?.name}
+                        </span>
                     </div>
                     <div>
                         <Rate allowHalf defaultValue={stars} value={stars} />
-                        <span className={cx('text-sell')}> | Đã bán 1000+ </span>
+                        <span className={cx('text-sell')}> | Đã bán 1000+ , Kho {productDetails?.countInStock} </span>
                     </div>
                     <div className={cx('product-price')}>
                         <h1 className={cx('text-price')}>{productDetails?.price?.toLocaleString()} VNĐ</h1>

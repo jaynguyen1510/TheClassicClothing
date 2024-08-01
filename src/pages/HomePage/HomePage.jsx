@@ -23,9 +23,9 @@ const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search);
     const searchDebounce = useDebounceCustomHook(searchProduct, 1000);
     const [loadingProduct, setLoadingProduct] = useState(false);
-    const [limit, setLimit] = useState(1);
+    const [limit, setLimit] = useState(5);
     const [buttonText, setButtonText] = useState('Xem thêm');
-    const itemsClothings = ['Quần dài', 'Quần ngắn', 'Áo kiểu', 'Áo ba lỗ', 'Đầm', 'Khác'];
+    const [typeProducts, setTypeProducts] = useState([]);
 
     const fetchProductAll = async (context) => {
         const limited = context?.queryKey && context?.queryKey[1];
@@ -34,6 +34,15 @@ const HomePage = () => {
 
         return res;
     };
+    const fetchAllTypeProducts = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        if (res?.status === 'OK') {
+            setTypeProducts(res?.data);
+        }
+    };
+    useEffect(() => {
+        fetchAllTypeProducts();
+    }, []);
 
     const { isLoading, data: products } = useQuery({
         queryKey: ['products', limit, searchDebounce],
@@ -62,7 +71,7 @@ const HomePage = () => {
         <>
             <div style={{ width: '1270px', margin: '0 auto' }}>
                 <WrapperTypeProduct>
-                    {itemsClothings.map((item) => (
+                    {typeProducts?.map((item) => (
                         <TypeProduct key={item} name={item} />
                     ))}
                 </WrapperTypeProduct>

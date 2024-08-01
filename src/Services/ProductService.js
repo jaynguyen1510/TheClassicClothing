@@ -61,3 +61,7 @@ export const deleteManyProduct = async (data, access_token) => {
         console.error('Error delete product:', error);
     }
 };
+export const getAllTypeProduct = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/products/get-all-type`)
+    return res.data
+}

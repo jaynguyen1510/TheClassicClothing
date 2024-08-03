@@ -1,6 +1,6 @@
 .body {
     width: 100%;
-    background: rgb(239, 239, 239);
+    height: calc(100vh - 64px);
 }
 
 .wrapper-fragment {
@@ -15,7 +15,7 @@
     padding-bottom: 20px;
     flex-wrap: nowrap;
     background: #fff;
-    background-color: rgba(244, 186, 186, 1);
+    background-color: rgba(244, 186, 186, 0.5);
 }
 .items-bar {
     padding-top: 10px;

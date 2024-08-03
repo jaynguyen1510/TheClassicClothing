@@ -36,6 +36,9 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const handleHomePages = () => {
         naviGate('/');
     };
+    const handleOrderPages = () => {
+        naviGate('/order');
+    };
 
     const handleLogOut = async () => {
         setIsPending(true);
@@ -108,7 +111,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                         </WrapperHeaderAccount>
                     </LoadingComponent>
                     {!isHiddenCart && (
-                        <div>
+                        <div onClick={handleOrderPages} style={{ cursor: 'pointer' }}>
                             <Badge count={4} size="small">
                                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#000' }} />
                             </Badge>

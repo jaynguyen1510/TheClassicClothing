@@ -14,6 +14,14 @@ export const getAllProducts = async (search, limited) => {
     return res.data
 }
 
+export const getProductsTypes = async (type) => {
+    let res = {}
+    if (type) {
+        res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/products/get-all?filter=type&filter=${type}`)
+        return res.data
+    }
+}
+
 export const createProducts = async (data) => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL_BACKEND}/products/create-product`, data)
     return res.data

@@ -21,7 +21,7 @@ const cx = classNames.bind(styles);
 
 const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search);
-    const searchDebounce = useDebounceCustomHook(searchProduct, 1000);
+    const searchDebounce = useDebounceCustomHook(searchProduct, 500);
     const [loadingProduct, setLoadingProduct] = useState(false);
     const [limit, setLimit] = useState(5);
     const [buttonText, setButtonText] = useState('Xem thêm');

@@ -4,12 +4,14 @@
 }
 
 .wrapper-fragment {
+    height: 100%;
     padding: 0 120px;
     width: 1270px;
     margin: 0 auto;
 }
 
 .row-items {
+    height: calc(100% - 20px);
     padding: 0 10px;
     padding-top: 10px;
     padding-bottom: 20px;
@@ -28,6 +30,7 @@
     background: #fff;
 }
 .items-product {
+    overflow-y: auto;
     display: flex;
     padding-bottom: 20px;
     margin-top: 20px;

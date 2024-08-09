@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DeleteOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Checkbox } from 'antd';
 import {
@@ -7,21 +7,59 @@ import {
     WrapperItemOrder,
     WrapperLeft,
     WrapperListOrder,
-    WrapperPriceDiscount,
+    // WrapperPriceDiscount,
     WrapperRight,
     WrapperStyleHeader,
     WrapperTotal,
 } from './style';
 import { WrapperInputNumber } from '~/components/ProductDetailComponent/style';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import { useDispatch, useSelector } from 'react-redux';
+import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct } from '~/redux/slides/orderSlide';
 
-const OrderPage = ({ count = 1 }) => {
+const OrderPage = () => {
+    const order = useSelector((state) => state.order);
+
+    const [listCheckbox, setListCheckbox] = useState([]);
+    const dispatch = useDispatch();
+
     const onChange = (e) => {
-        console.log(`onChange = ${e.target.value}`);
+        const checkList = listCheckbox.includes(e.target.value);
+        if (checkList) {
+            const newCheckBox = listCheckbox.filter((items) => items !== e.target.value);
+            setListCheckbox(newCheckBox);
+        } else {
+            setListCheckbox([...listCheckbox, e.target.value]);
+        }
     };
 
-    const handleChangeCount = () => {};
-    const handleOnchangeCheckAll = () => {};
+    const handleChangeCount = (type, idProduct) => {
+        if (type === 'increase') {
+            dispatch(increaseAmount({ idProduct }));
+        } else if (type === 'decrease') {
+            dispatch(decreaseAmount({ idProduct }));
+        }
+    };
+    const handleDeletedOrder = (idProduct) => {
+        dispatch(removeOrderProduct({ idProduct }));
+    };
+    const handleOnchangeCheckAll = (e) => {
+        if (e.target.checked) {
+            const listCheckAll = [];
+            order?.orderItems?.forEach((item) => {
+                listCheckAll.push(item?.product);
+            });
+            setListCheckbox(listCheckAll); // Đặt giá trị của ListCheckAll vào state
+        } else {
+            setListCheckbox([]);
+        }
+    };
+    const handleDeleteAllProducts = () => {
+        if (listCheckbox?.length > 1) {
+            dispatch(removeAllOrderProduct({ listCheckbox }));
+        }
+    };
+    console.log('listCheck', listCheckbox);
 
     return (
         <div style={{ background: '#f5f5fa', width: '100%', height: '100vh' }}>
@@ -31,61 +69,103 @@ const OrderPage = ({ count = 1 }) => {
                     <WrapperLeft>
                         <WrapperStyleHeader>
                             <span style={{ display: 'flex', alignItems: 'center', width: '390px' }}>
-                                <Checkbox onChange={handleOnchangeCheckAll} />
-                                <span style={{ marginLeft: '8px' }}> Tất cả ({count} sản phẩm) </span>
+                                <Checkbox
+                                    onChange={handleOnchangeCheckAll}
+                                    value={order?.product}
+                                    checked={listCheckbox?.length === order?.orderItems?.length}
+                                />
+                                <span style={{ marginLeft: '8px' }}>Tất cả ({order?.orderItems?.length} sản phẩm)</span>
                             </span>
                             <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between' }}>
                                 <span>Đơn giá</span>
                                 <span>Số lượng</span>
                                 <span>Thành tiền</span>
-                                <DeleteOutlined style={{ cursor: 'pointer' }} />
+                                <DeleteOutlined style={{ cursor: 'pointer' }} onClick={handleDeleteAllProducts} />
                             </div>
                         </WrapperStyleHeader>
                         <WrapperListOrder>
-                            <WrapperItemOrder>
-                                <div style={{ display: 'flex', alignItems: 'center', width: '390px' }}>
-                                    <Checkbox onChange={onChange} />
-                                    <img
-                                        src="https://via.placeholder.com/150"
-                                        style={{
-                                            width: '77px',
-                                            height: '77px',
-                                            objectFit: 'contain',
-                                            marginLeft: '8px',
-                                        }}
-                                        alt="product"
-                                    />
-                                    <div style={{ marginLeft: '8px' }}>Tên sản phẩm</div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flex: 1,
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{ fontSize: '13px', color: '#242424' }}>211</span>
-                                        <WrapperPriceDiscount>230</WrapperPriceDiscount>
-                                    </div>
-                                    <WrapperCounterOrder>
-                                        <button
-                                            style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+                            {order?.orderItems?.map((orderItem, index) => {
+                                return (
+                                    <WrapperItemOrder key={index}>
+                                        <div style={{ display: 'flex', alignItems: 'center', width: '390px' }}>
+                                            <Checkbox
+                                                onChange={onChange}
+                                                value={orderItem?.product}
+                                                checked={listCheckbox?.includes(orderItem?.product)}
+                                            />
+                                            <img
+                                                src={orderItem?.image}
+                                                style={{
+                                                    width: '77px',
+                                                    height: '77px',
+                                                    objectFit: 'contain',
+                                                    marginLeft: '8px',
+                                                }}
+                                                alt="product"
+                                            />
+                                            <div
+                                                style={{
+                                                    marginLeft: '8px',
+                                                    width: '260px',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {orderItem?.name}
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                flex: 1,
+                                                justifyContent: 'space-between',
+                                            }}
                                         >
-                                            <MinusOutlined style={{ color: '#000', fontSize: '14px' }} />
-                                        </button>
-                                        <WrapperInputNumber onChange={onChange} defaultValue={1} />
-                                        <button
-                                            style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
-                                        >
-                                            <PlusOutlined style={{ color: '#000', fontSize: '14px' }} />
-                                        </button>
-                                    </WrapperCounterOrder>
-                                    <span style={{ color: 'rgb(255,66,78)', fontSize: '13px' }}>211</span>
-                                    <DeleteOutlined style={{ cursor: 'pointer' }} />
-                                </div>
-                            </WrapperItemOrder>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <span style={{ fontSize: '13px', color: '#242424' }}>
+                                                    {orderItem?.price?.toLocaleString()} VNĐ
+                                                </span>
+                                                {/* <WrapperPriceDiscount>{orderItem?.amount}</WrapperPriceDiscount> */}
+                                            </div>
+                                            <WrapperCounterOrder>
+                                                <button
+                                                    style={{
+                                                        border: 'none',
+                                                        background: 'transparent',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() => handleChangeCount('decrease', orderItem?.product)}
+                                                >
+                                                    <MinusOutlined style={{ color: '#000', fontSize: '14px' }} />
+                                                </button>
+                                                <WrapperInputNumber
+                                                    defaultValue={orderItem?.amount}
+                                                    value={orderItem?.amount}
+                                                />
+                                                <button
+                                                    style={{
+                                                        border: 'none',
+                                                        background: 'transparent',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() => handleChangeCount('increase', orderItem?.product)}
+                                                >
+                                                    <PlusOutlined style={{ color: '#000', fontSize: '14px' }} />
+                                                </button>
+                                            </WrapperCounterOrder>
+                                            <span style={{ color: 'rgb(255,66,78)', fontSize: '13px' }}>
+                                                {(orderItem?.price * orderItem?.amount).toLocaleString()} VNĐ
+                                            </span>
+                                            <DeleteOutlined
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => handleDeletedOrder(orderItem?.product)}
+                                            />
+                                        </div>
+                                    </WrapperItemOrder>
+                                );
+                            })}
                         </WrapperListOrder>
                     </WrapperLeft>
                     <WrapperRight>

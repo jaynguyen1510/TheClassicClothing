@@ -11,7 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 import { routes } from '~/routes/index';
 import { Image } from 'antd';
 import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const location = useLocation();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
 
@@ -32,7 +33,11 @@ const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', co
 
     useEffect(() => {
         if (isSuccess && data?.access_token) {
-            naviGate(routes[0].path);
+            if (location?.state) {
+                naviGate(location?.state);
+            } else {
+                naviGate(routes[0].path);
+            }
             localStorage.setItem('access_token', JSON.stringify(data?.access_token));
             if (data?.access_token) {
                 const decoded = jwtDecode(data?.access_token);

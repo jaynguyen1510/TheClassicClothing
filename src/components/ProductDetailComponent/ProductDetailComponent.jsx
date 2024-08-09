@@ -12,8 +12,10 @@ import { Col, Image, Rate, Row } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { routes } from '~/routes';
+import { addOrderProduct } from '~/redux/slides/orderSlide';
 
 const cx = classNames.bind(styles);
 
@@ -26,11 +28,14 @@ const ProductDetailComponent = ({
     colorButton = '#fff',
 }) => {
     const [quantityProduct, setQuantityProduct] = useState(1);
+    const location = useLocation();
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const handleLogin = () => {
-        navigate('/sign-in');
+        navigate(routes[4].path, { state: location?.pathname });
     };
+
     const handleChange = (value) => {
         setQuantityProduct(Number(value));
     };
@@ -43,6 +48,38 @@ const ProductDetailComponent = ({
             if (quantityProduct < 20) {
                 setQuantityProduct(quantityProduct + 1);
             }
+        }
+    };
+    const handleAddProduct = () => {
+        if (!user?.id) {
+            setTimeout(() => {
+                alert('Vui lòng đăng nhập để mua hàng');
+                navigate(routes[4].path, { state: location?.pathname });
+            }, 300);
+        } else {
+            // navigate(routes[1].path);
+            // {
+            //     name: { type: String, required: true },
+            //     amount: { type: Number, required: true },
+            //     image: { type: String, required: true },
+            //     price: { type: Number, required: true },
+            //     product: {
+            //         type: mongoose.Schema.Types.ObjectId,
+            //         ref: "Product",
+            //         required: true
+            //     },
+            // },
+            dispatch(
+                addOrderProduct({
+                    orderItems: {
+                        name: productDetails?.name,
+                        amount: quantityProduct,
+                        image: productDetails?.image,
+                        price: productDetails?.price,
+                        product: productDetails?._id,
+                    },
+                }),
+            );
         }
     };
 
@@ -61,7 +98,7 @@ const ProductDetailComponent = ({
     });
 
     const stars = productDetails?.rating;
-    console.log('productDetails', productDetails);
+    // console.log('order bring together', productDetails, user);
 
     return (
         <LoadingComponent isPending={isLoading}>
@@ -102,7 +139,7 @@ const ProductDetailComponent = ({
                                     <span className={cx('address')}>{user.address}</span>
                                 </>
                             ) : (
-                                <span className={cx('address')}> Vui lòng đăng nhập để có địa chỉ </span>
+                                <span className={cx('address')}> Đăng nhập để có địa chỉ </span>
                             )}
                         </span>
                         -<span className={cx('change-address')}> Đổi địa chỉ</span>
@@ -130,7 +167,8 @@ const ProductDetailComponent = ({
                                     backgroundColor: backgroundColorButton,
                                     color: colorButton,
                                 }}
-                                textButton={'Mua '}
+                                onClick={handleAddProduct}
+                                textButton={'Mua'}
                             />
                             <ButtonComponent
                                 bordered={undefined}
@@ -145,6 +183,7 @@ const ProductDetailComponent = ({
                                     backgroundColor: '#fff',
                                     color: 'rgb(13,92,182)',
                                 }}
+                                onClick={handleAddProduct}
                                 textButton={'Mua trả sau '}
                             />
                         </div>

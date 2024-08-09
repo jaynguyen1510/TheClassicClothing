@@ -14,30 +14,32 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetUser } from '~/redux/slides/userSlide';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { searchProduct } from '~/redux/slides/productSlide';
+import { routes } from '~/routes';
 
 const cx = classNames.bind(styles);
 
 function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const naviGate = useNavigate();
     const user = useSelector((state) => state.user);
+    const order = useSelector((state) => state.order);
     const dispatch = useDispatch();
     const [isPending, setIsPending] = useState(false);
     const [search, setSearch] = useState('');
 
     const handelNavigateLogin = () => {
-        naviGate('/sign-in');
+        naviGate(routes[4].path);
     };
     const handleProfileUser = () => {
-        naviGate('/profile-user');
+        naviGate(routes[6].path);
     };
     const handleAdminPage = () => {
-        naviGate('/system/admin');
+        naviGate(routes[8].path);
     };
     const handleHomePages = () => {
-        naviGate('/');
+        naviGate(routes[0].path);
     };
     const handleOrderPages = () => {
-        naviGate('/order');
+        naviGate(routes[1].path);
     };
 
     const handleLogOut = async () => {
@@ -112,7 +114,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                     </LoadingComponent>
                     {!isHiddenCart && (
                         <div onClick={handleOrderPages} style={{ cursor: 'pointer' }}>
-                            <Badge count={4} size="small">
+                            <Badge count={order?.orderItems?.length} size="small">
                                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#000' }} />
                             </Badge>
                             <WrapperHeaderSmall>cart</WrapperHeaderSmall>

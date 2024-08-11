@@ -18,7 +18,8 @@ export const routes = [
   {
     path: "/order",
     page: OrderPage,
-    isShowHeader: true,
+    isShowHeader: false,
+
   },
   {
     path: "/products",

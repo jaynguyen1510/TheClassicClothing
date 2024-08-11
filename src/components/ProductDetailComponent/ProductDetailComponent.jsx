@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { addOrderProduct } from '~/redux/slides/orderSlide';
+import { convertPrice } from '~/ultils';
 
 const cx = classNames.bind(styles);
 
@@ -129,7 +130,7 @@ const ProductDetailComponent = ({
                         <span className={cx('text-sell')}> | Đã bán 1000+ , Kho {productDetails?.countInStock} </span>
                     </div>
                     <div className={cx('product-price')}>
-                        <h1 className={cx('text-price')}>{productDetails?.price?.toLocaleString()} VNĐ</h1>
+                        <h1 className={cx('text-price')}>{convertPrice(productDetails?.price)}</h1>
                     </div>
                     <div>
                         <span onClick={!user?.address ? handleLogin : undefined}>

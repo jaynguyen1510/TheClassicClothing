@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './ProductDetailPage.module.scss';
 import ProductDetailComponent from '~/components/ProductDetailComponent/ProductDetailComponent';
 import { useNavigate, useParams } from 'react-router-dom';
+import { routes } from '~/routes';
 
 const cx = classNames.bind(styles);
 
@@ -10,7 +11,7 @@ const ProductDetailPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const handleHomePage = () => {
-        navigate('/');
+        navigate(routes[0].path);
     };
     return (
         <div className={cx('wrapper-product')}>

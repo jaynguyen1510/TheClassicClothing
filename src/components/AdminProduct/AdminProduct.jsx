@@ -26,6 +26,7 @@ const AdminProduct = () => {
     const formItems = [
         { label: 'Tên sản phẩm', name: 'name', message: 'Vui lòng nhập tên sản phẩm' },
         { label: 'Giá sản phẩm', name: 'price', message: 'Vui lòng nhập giá sản phẩm' },
+        { label: 'Mã giảm giá', name: 'discount', message: 'Vui lòng nhập mã giảm giá' },
         { label: 'Đánh giá', name: 'rating', message: 'Vui lòng nhập đánh giá' },
         { label: 'Số lượng sản phẩm', name: 'countInStock', message: 'Vui lòng nhập hàng còn trong kho' },
         { label: 'Trạng thái', name: 'description', message: 'Vui lòng nhập trạng thái sản phẩm' },
@@ -36,7 +37,6 @@ const AdminProduct = () => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [rowSelected, setRowSelected] = useState('');
     const [isPendingUpdate, setIsPendingUpdate] = useState(false);
-    const [typeSelect, setTypeSelect] = useState('');
 
     const searchInput = useRef(null);
 
@@ -72,6 +72,7 @@ const AdminProduct = () => {
         description: '',
         countInStock: '',
         newType: '',
+        discount: '',
     });
 
     const [sateDetailsProducts, setSateDetailsProducts] = useState({
@@ -81,13 +82,14 @@ const AdminProduct = () => {
         image: '',
         rating: '',
         description: '',
+        discount: '',
         countInStock: '',
     });
 
     const [form] = Form.useForm();
 
     const mutation = useMutationCustomHook(async (data) => {
-        const { name, type, price, description, image, countInStock, rating } = data;
+        const { name, type, price, description, image, countInStock, rating, discount } = data;
         const res = await ProductService.createProducts({
             name,
             rating,
@@ -96,6 +98,7 @@ const AdminProduct = () => {
             price,
             description,
             image,
+            discount,
         });
         return res;
     });
@@ -127,6 +130,7 @@ const AdminProduct = () => {
                 price: res?.data?.price,
                 image: res?.data?.image,
                 rating: res?.data?.rating,
+                discount: res?.data?.discount,
                 description: res?.data?.description,
                 countInStock: res?.data?.countInStock,
             });
@@ -393,6 +397,7 @@ const AdminProduct = () => {
             image: '',
             rating: '',
             description: '',
+            discount: '',
             countInStock: '',
         });
         form.resetFields();
@@ -437,6 +442,7 @@ const AdminProduct = () => {
             rating: sateProducts.rating,
             description: sateProducts.description,
             countInStock: sateProducts.countInStock,
+            discount: sateProducts.discount,
         };
         mutation.mutate(params, {
             onSettled: () => {

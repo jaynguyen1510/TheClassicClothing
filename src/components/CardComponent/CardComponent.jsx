@@ -7,6 +7,7 @@ import imgOffice from '~/assets/images/office.png';
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceText, WrapperReportText } from './style';
 import { StarFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { convertPrice } from '~/ultils';
 
 const cx = classNames.bind(styles);
 
@@ -33,7 +34,7 @@ const CardComponent = ({ id, countInStock, description, image, name, price, rati
                     </span>
                 </WrapperReportText>
                 <WrapperPriceText>
-                    <span className={cx('text-price')}>{price?.toLocaleString()} VNĐ</span>
+                    <span className={cx('text-price')}>{convertPrice(price)}</span>
                     <WrapperDiscountText>sale - {discount || 5}%</WrapperDiscountText>
                 </WrapperPriceText>
             </WrapperCardStyle>

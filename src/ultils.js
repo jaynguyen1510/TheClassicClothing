@@ -31,3 +31,11 @@ export const renderOptions = (arr) => {
     })
     return result
 }
+export const convertPrice = (price) => {
+    try {
+        const result = price?.toLocaleString()
+        return `${result} VNĐ`;
+    } catch (error) {
+        return null
+    }
+}

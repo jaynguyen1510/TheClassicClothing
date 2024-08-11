@@ -28,6 +28,7 @@ export const orderProductSlide = createSlice({
         addOrderProduct: (state, action) => {
             const { orderItems } = action.payload;
             const itemsOrderItem = state?.orderItems?.find((items) => items?.product === orderItems.product)
+
             if (itemsOrderItem) {
                 itemsOrderItem.amount += orderItems?.amount
             } else {
@@ -37,12 +38,18 @@ export const orderProductSlide = createSlice({
         increaseAmount: (state, action) => {
             const { idProduct } = action.payload;
             const itemsOrderItem = state?.orderItems?.find((items) => items?.product === idProduct)
-            itemsOrderItem.amount++
+            // Kiểm tra nếu item tồn tại và số lượng lớn hơn hoặc bằng 1 trước khi tăng
+            if (itemsOrderItem && itemsOrderItem.amount >= 1) {
+                itemsOrderItem.amount++;
+            }
         },
         decreaseAmount: (state, action) => {
             const { idProduct } = action.payload;
             const itemsOrderItem = state?.orderItems?.find((items) => items?.product === idProduct)
-            itemsOrderItem.amount--
+            // Kiểm tra nếu item tồn tại và số lượng lớn hơn 1 trước khi giảm
+            if (itemsOrderItem && itemsOrderItem.amount > 1) {
+                itemsOrderItem.amount--;
+            }
         },
         removeOrderProduct: (state, action) => {
             const { idProduct } = action.payload;
@@ -56,7 +63,6 @@ export const orderProductSlide = createSlice({
         },
         removeAllOrderProduct: (state, action) => {
             const { listCheckbox } = action.payload;
-            console.log('listCheckbox', listCheckbox);
 
             // Tạo một danh sách mới không chứa sản phẩm có idProduct cần xóa
             const updatedOrderItems = state?.orderItems?.filter((items) => !listCheckbox.includes(items.product));

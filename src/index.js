@@ -5,9 +5,10 @@ import App from "~/App";
 import reportWebVitals from "./reportWebVitals";
 import GlobalStyle from "~/components/GlobalStyle";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { persistor, store } from "./redux/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { PersistGate } from 'redux-persist/integration/react'
 
 document.title = 'The Classic'
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -17,9 +18,11 @@ root.render(
   // <React.StrictMode>
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
-      <GlobalStyle>
-        <App />
-      </GlobalStyle>
+      <PersistGate loading={null} persistor={persistor}>
+        <GlobalStyle>
+          <App />
+        </GlobalStyle>
+      </PersistGate>
     </Provider>
     <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>

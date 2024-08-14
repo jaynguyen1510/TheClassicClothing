@@ -76,8 +76,6 @@ const AdminUser = () => {
         queryFn: getAllUsers,
     });
 
-    console.log('mutationManyDeleted', mutationManyDeleted);
-
     const getDetailsUser = async (rowSelected) => {
         const res = await UserService.getDetailsUser(rowSelected);
         if (res?.data) {

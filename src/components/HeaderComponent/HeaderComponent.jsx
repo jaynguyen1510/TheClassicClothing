@@ -39,15 +39,35 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         naviGate(routes[0].path);
     };
     const handleOrderPages = () => {
-        naviGate(routes[1].path);
+        const accessToken = localStorage.getItem('access_token');
+        if (accessToken) {
+            naviGate(routes[1].path);
+        } else {
+            naviGate(routes[4].path);
+        }
     };
 
     const handleLogOut = async () => {
-        setIsPending(true);
-        localStorage.removeItem('access_token');
-        await UserService.logOutUser();
-        dispatch(resetUser());
-        setIsPending(false);
+        try {
+            // Thực hiện việc đăng xuất
+            await UserService.logOutUser();
+
+            // Cập nhật trạng thái đang xử lý
+            setIsPending(true);
+
+            // Xóa dữ liệu trong localStorage và reset state của người dùng
+            localStorage.clear();
+            dispatch(resetUser());
+
+            // Chuyển hướng về trang chủ sau khi đăng xuất thành công
+            naviGate(routes[0].path);
+        } catch (error) {
+            // Xử lý lỗi (nếu có)
+            console.error('Error logging out:', error);
+        } finally {
+            // Dù thành công hay thất bại, cũng đặt isPending về false
+            setIsPending(false);
+        }
     };
 
     const content = (

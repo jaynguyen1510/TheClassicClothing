@@ -1,28 +1,58 @@
+import React, { useEffect, useMemo, useState } from 'react';
+
 import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
-import React, { useMemo, useState } from 'react';
+import ModalComponent from '~/components/ModalComponent/ModalComponent';
+import InputComponent from '~/components/InputComponent/InputComponent';
+import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+
+import * as UserService from '~/Services/UserService';
+import * as message from '~/components/Message/Message';
+
 import { DeleteOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { Checkbox } from 'antd';
+import { Checkbox, Form } from 'antd';
 import {
     WrapperCounterOrder,
     WrapperInfo,
     WrapperItemOrder,
     WrapperLeft,
     WrapperListOrder,
-    // WrapperPriceDiscount,
     WrapperRight,
     WrapperStyleHeader,
     WrapperTotal,
 } from './style';
 import { WrapperInputNumber } from '~/components/ProductDetailComponent/style';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct } from '~/redux/slides/orderSlide';
+import {
+    decreaseAmount,
+    increaseAmount,
+    removeAllOrderProduct,
+    removeOrderProduct,
+    selectedOrderItem,
+} from '~/redux/slides/orderSlide';
 import { convertPrice } from '~/ultils';
+import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
+import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { updateUser } from '~/redux/slides/userSlide';
 
 const OrderPage = () => {
+    const formItems = [
+        { label: 'Tên', name: 'name', message: 'Vui lòng nhập tên sản phẩm' },
+        { label: 'Tỉnh/Thành', name: 'city', message: 'Vui lòng nhập Tỉnh/Thành ' },
+        { label: 'Số điện thoại', name: 'phone', message: 'Vui lòng nhập phone' },
+        { label: 'Địa chỉ', name: 'address', message: 'Vui lòng nhập địa chỉ ' },
+    ];
     const order = useSelector((state) => state.order);
-
+    const user = useSelector((state) => state.user);
     const [listCheckbox, setListCheckbox] = useState([]);
+    const [isOpenModelUpdateInformation, setIsOpenModelUpdateInformation] = useState(false);
+    const [sateDetailsUsers, setSateDetailsUsers] = useState({
+        address: '',
+        name: '',
+        phone: '',
+        city: '',
+    });
+    const [form] = Form.useForm();
+
     const dispatch = useDispatch();
 
     const onChange = (e) => {
@@ -34,6 +64,26 @@ const OrderPage = () => {
             setListCheckbox([...listCheckbox, e.target.value]);
         }
     };
+
+    useEffect(() => {
+        dispatch(selectedOrderItem({ listCheckbox }));
+    }, [listCheckbox]);
+
+    useEffect(() => {
+        form.setFieldsValue(sateDetailsUsers);
+    }, [form, sateDetailsUsers]);
+
+    useEffect(() => {
+        if (isOpenModelUpdateInformation) {
+            setSateDetailsUsers({
+                city: user?.city,
+                name: user?.name,
+                address: user?.address,
+                phone: user?.phone,
+            });
+        }
+    }, [isOpenModelUpdateInformation]);
+    console.log('User info:', user);
 
     const handleChangeCount = (type, idProduct) => {
         if (type === 'increase') {
@@ -61,18 +111,71 @@ const OrderPage = () => {
             dispatch(removeAllOrderProduct({ listCheckbox }));
         }
     };
+
+    const handleAddCart = () => {
+        if (!order?.selectItemsOrder?.length) {
+            message.error('Vui lòng chọn sản phẩm');
+        } else if (!user?.address || !user?.phone || !user?.name || !user?.city) {
+            setIsOpenModelUpdateInformation(true);
+        } else {
+            // Tiến hành mua hàng, ví dụ như điều hướng đến trang thanh toán hoặc gọi API
+            console.log('Proceed to checkout');
+        }
+    };
+
+    const handleCancelUpdate = () => {
+        setSateDetailsUsers({
+            name: '',
+            email: '',
+            phone: '',
+            city: '',
+            isAdmin: false,
+        });
+        form.resetFields();
+        setIsOpenModelUpdateInformation(false);
+    };
+
+    const mutationUpdate = useMutationCustomHook(async (data) => {
+        const { id, token, ...rests } = data;
+        const res = await UserService.updateUser(id, { ...rests }, token);
+        return res;
+    });
+    const { isPending: isLoading, data } = mutationUpdate;
+    console.log('data', data);
+
+    const handleUpdatedInfoUser = () => {
+        // Gửi dữ liệu về server để update thông tin người dùng
+        const { name, city, address, phone } = sateDetailsUsers;
+
+        if (name && address && city && phone) {
+            mutationUpdate.mutate(
+                { id: user?.id, token: user?.access_token, ...sateDetailsUsers },
+                {
+                    onSuccess: () => {
+                        dispatch(updateUser({ name, city, address, phone }));
+                        setIsOpenModelUpdateInformation(false);
+                        message.success('Cập nhật thông tin thành công');
+                    },
+                },
+            );
+        }
+    };
+
+    const handleOnChangeDetailsUser = (e, name) => {
+        setSateDetailsUsers({ ...sateDetailsUsers, [name]: e.target.value });
+    };
+
     const priceMemo = useMemo(() => {
-        return order?.orderItems?.reduce((total, item) => {
-            const result = total + item?.price * item?.amount;
-            return Number(result);
+        return order?.selectItemsOrder?.reduce((total, item) => {
+            return total + item?.price * item?.amount;
         }, 0);
     }, [order]);
 
     const priceDiscountMemo = useMemo(() => {
-        const result = order?.orderItems?.reduce((total, item) => {
+        const result = order?.selectItemsOrder?.reduce((total, item) => {
             // Giả sử item.discount là tỷ lệ phần trăm (ví dụ: 10 cho 10%).
             const discountAmount = Number(item?.price * item?.amount * (item?.discount / 100));
-            return Number(total + discountAmount);
+            return total + discountAmount;
         }, 0);
         if (Number(result)) {
             return result;
@@ -81,17 +184,28 @@ const OrderPage = () => {
     }, [order]);
 
     const deliveryPriceMemo = useMemo(() => {
-        if (priceMemo < 400000) {
+        if (priceMemo) {
             return Number(35000);
-        } else {
-            return 0;
         }
+        return 0;
     }, [priceMemo]);
+
     const resultPriceMemo = useMemo(() => {
         return Number(priceMemo + deliveryPriceMemo + priceDiscountMemo);
     }, [deliveryPriceMemo, priceMemo, priceDiscountMemo]);
 
-    const deliveryPriceString = deliveryPriceMemo === 0 ? 'Miễn Phí' : `${deliveryPriceMemo.toLocaleString()} VNĐ`;
+    const totalDeliveryPriceMemo = useMemo(() => {
+        if (resultPriceMemo === 0) {
+            return 0;
+        } else if (resultPriceMemo < 400000) {
+            return deliveryPriceMemo;
+        } else {
+            return 0;
+        }
+    }, [resultPriceMemo, deliveryPriceMemo]);
+
+    const deliveryPriceString =
+        totalDeliveryPriceMemo === 0 ? 'Miễn Phí' : `${totalDeliveryPriceMemo.toLocaleString()} VNĐ`;
 
     return (
         <>
@@ -255,10 +369,11 @@ const OrderPage = () => {
                             </div>
                             <ButtonComponent
                                 size={40}
+                                onClick={handleAddCart}
                                 styleButton={{
                                     background: 'rgba(244, 186, 186, 0.5)',
                                     height: '48px',
-                                    width: '220px',
+                                    width: '320px',
                                     border: 'none',
                                     borderRadius: '4px',
                                     fontSize: '15px',
@@ -275,6 +390,33 @@ const OrderPage = () => {
                     </div>
                 </div>
             </div>
+            <ModalComponent
+                forceRender
+                title="Cập nhật thông tin giao hàng"
+                open={isOpenModelUpdateInformation}
+                onCancel={handleCancelUpdate}
+                onOk={handleUpdatedInfoUser}
+            >
+                <LoadingComponent isPending={isLoading}>
+                    <Form
+                        name="EditUserForm"
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 20 }}
+                        // onFinish={onUpdateUser}
+                        autoComplete="on"
+                        form={form}
+                    >
+                        {formItems.map(({ label, name, message }) => (
+                            <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
+                                <InputComponent
+                                    value={sateDetailsUsers[name]}
+                                    onChange={(e) => handleOnChangeDetailsUser(e, name)}
+                                />
+                            </Form.Item>
+                        ))}
+                    </Form>
+                </LoadingComponent>
+            </ModalComponent>
         </>
     );
 };

@@ -8,7 +8,7 @@ import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import * as ProductService from '~/Services/ProductService';
 
 import { WrapperInputNumber } from './style';
-import { Col, Image, Rate, Row } from 'antd';
+import { Col, Image, message, Rate, Row } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
@@ -34,7 +34,7 @@ const ProductDetailComponent = ({
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleLogin = () => {
-        navigate(routes[4].path, { state: location?.pathname });
+        navigate(routes[5].path, { state: location?.pathname });
     };
 
     const handleChange = (value) => {
@@ -54,8 +54,8 @@ const ProductDetailComponent = ({
     const handleAddProduct = () => {
         if (!user?.id) {
             setTimeout(() => {
-                alert('Vui lòng đăng nhập để mua hàng');
-                navigate(routes[4].path, { state: location?.pathname });
+                message.error('Vui lòng đăng nhập để mua hàng');
+                navigate(routes[5].path, { state: location?.pathname });
             }, 300);
         } else {
             // navigate(routes[1].path);

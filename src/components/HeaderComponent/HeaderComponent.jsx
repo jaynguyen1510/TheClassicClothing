@@ -43,7 +43,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         if (accessToken) {
             naviGate(routes[1].path);
         } else {
-            naviGate(routes[4].path);
+            naviGate(routes[5].path);
         }
     };
 

@@ -137,7 +137,9 @@ const ProductDetailComponent = ({
                             {user?.address ? (
                                 <>
                                     <span className={cx('label')}>Giao đến </span>
-                                    <span className={cx('address')}>{user.address}</span>
+                                    <span className={cx('address')}>
+                                        {user?.address} , {user?.city}
+                                    </span>
                                 </>
                             ) : (
                                 <span className={cx('address')}> Đăng nhập để có địa chỉ </span>

@@ -33,6 +33,8 @@ import { convertPrice } from '~/ultils';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '~/routes';
 
 const OrderPage = () => {
     const formItems = [
@@ -51,6 +53,7 @@ const OrderPage = () => {
         phone: '',
         city: '',
     });
+    const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const dispatch = useDispatch();
@@ -64,10 +67,22 @@ const OrderPage = () => {
             setListCheckbox([...listCheckbox, e.target.value]);
         }
     };
+    const handleOnchangeCheckAll = (e) => {
+        if (e.target.checked) {
+            const listCheckAll = [];
+            order?.orderItems?.forEach((item) => {
+                listCheckAll.push(item?.product);
+            });
+            setListCheckbox(listCheckAll); // Đặt giá trị của ListCheckAll vào state
+        } else {
+            setListCheckbox([]);
+        }
+    };
 
     useEffect(() => {
+        console.log('List Checkbox:', listCheckbox); // Kiểm tra giá trị của listCheckbox
         dispatch(selectedOrderItem({ listCheckbox }));
-    }, [listCheckbox]);
+    }, [listCheckbox, dispatch]);
 
     useEffect(() => {
         form.setFieldsValue(sateDetailsUsers);
@@ -83,7 +98,6 @@ const OrderPage = () => {
             });
         }
     }, [isOpenModelUpdateInformation]);
-    console.log('User info:', user);
 
     const handleChangeCount = (type, idProduct) => {
         if (type === 'increase') {
@@ -95,17 +109,7 @@ const OrderPage = () => {
     const handleDeletedOrder = (idProduct) => {
         dispatch(removeOrderProduct({ idProduct }));
     };
-    const handleOnchangeCheckAll = (e) => {
-        if (e.target.checked) {
-            const listCheckAll = [];
-            order?.orderItems?.forEach((item) => {
-                listCheckAll.push(item?.product);
-            });
-            setListCheckbox(listCheckAll); // Đặt giá trị của ListCheckAll vào state
-        } else {
-            setListCheckbox([]);
-        }
-    };
+
     const handleDeleteAllProducts = () => {
         if (listCheckbox?.length > 1) {
             dispatch(removeAllOrderProduct({ listCheckbox }));
@@ -119,7 +123,8 @@ const OrderPage = () => {
             setIsOpenModelUpdateInformation(true);
         } else {
             // Tiến hành mua hàng, ví dụ như điều hướng đến trang thanh toán hoặc gọi API
-            console.log('Proceed to checkout');
+            console.log('order', order);
+            navigate(routes[2].path);
         }
     };
 
@@ -159,6 +164,10 @@ const OrderPage = () => {
                 },
             );
         }
+    };
+
+    const handleChangeAddress = () => {
+        setIsOpenModelUpdateInformation(true);
     };
 
     const handleOnChangeDetailsUser = (e, name) => {
@@ -212,7 +221,7 @@ const OrderPage = () => {
             <HeaderComponent isHiddenSearch />
             <div style={{ background: '#f5f5fa', width: '100%', height: '100vh' }}>
                 <div style={{ width: '1270px', margin: '0 auto', padding: '20px' }}>
-                    <h3>Giỏ hàng</h3>
+                    <h3 style={{ fontSize: '15px' }}>Giỏ hàng</h3>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <WrapperLeft>
                             <WrapperStyleHeader>
@@ -323,7 +332,21 @@ const OrderPage = () => {
                             </WrapperListOrder>
                         </WrapperLeft>
                         <WrapperRight>
-                            <div style={{ width: '100%' }}>
+                            <div style={{ width: '100%', fontSize: '16px' }}>
+                                <WrapperInfo>
+                                    <div style={{ fontSize: '13px' }}>
+                                        <span>Địa chỉ: </span>
+                                        <span
+                                            style={{ color: 'red', cursor: 'pointer' }}
+                                        >{`${user?.address}, ${user?.city}`}</span>
+                                        <span
+                                            onClick={handleChangeAddress}
+                                            style={{ color: 'blue', cursor: 'pointer' }}
+                                        >
+                                            Thay đổi
+                                        </span>
+                                    </div>
+                                </WrapperInfo>
                                 <WrapperInfo>
                                     <div
                                         style={{

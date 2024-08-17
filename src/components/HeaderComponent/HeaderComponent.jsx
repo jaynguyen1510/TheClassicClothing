@@ -27,13 +27,13 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const [search, setSearch] = useState('');
 
     const handelNavigateLogin = () => {
-        naviGate(routes[4].path);
+        naviGate(routes[5].path);
     };
     const handleProfileUser = () => {
-        naviGate(routes[6].path);
+        naviGate(routes[7].path);
     };
     const handleAdminPage = () => {
-        naviGate(routes[8].path);
+        naviGate(routes[9].path);
     };
     const handleHomePages = () => {
         naviGate(routes[0].path);

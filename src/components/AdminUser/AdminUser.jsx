@@ -67,7 +67,7 @@ const AdminUser = () => {
     });
 
     const getAllUsers = async () => {
-        const res = await UserService.getAllUser();
+        const res = await UserService.getAllUser(user?.access_token);
         return res;
     };
 

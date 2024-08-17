@@ -55,7 +55,7 @@ export const updateUser = async (id, data, access_token) => {
 }
 
 export const getAllUser = async (access_token) => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/user/getAllUser`, {
+    const res = await axiosJwt.get(`${process.env.REACT_APP_API_URL_BACKEND}/user/getAllUser`, {
         headers: {
             token: `Bearer ${access_token}`,
         }

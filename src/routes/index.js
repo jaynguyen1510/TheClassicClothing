@@ -8,6 +8,7 @@ import SignInPages from "~/pages/SignInPages/SignInPages";
 import ProductDetailPage from "~/pages/ProductDetailPage/ProductDetailPage";
 import ProfilePage from "~/pages/Profile/ProfilePage";
 import AdminPage from "~/pages/AdminPage/AdminPage";
+import PayMentPage from "~/pages/PayMentPage/PayMentPage";
 
 export const routes = [
   {
@@ -18,6 +19,12 @@ export const routes = [
   {
     path: "/order",
     page: OrderPage,
+    isShowHeader: false,
+
+  },
+  {
+    path: "/payment",
+    page: PayMentPage,
     isShowHeader: false,
 
   },

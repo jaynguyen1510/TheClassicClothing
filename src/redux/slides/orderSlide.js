@@ -27,6 +27,7 @@ export const orderProductSlide = createSlice({
 
             if (itemsOrderItem) {
                 itemsOrderItem.amount += orderItems?.amount
+
             } else {
                 state.orderItems.push(orderItems);
             }
@@ -79,14 +80,16 @@ export const orderProductSlide = createSlice({
         },
         selectedOrderItem: (state, action) => {
             const { listCheckbox } = action.payload;
-            const order = []
-            state?.orderItems.forEach((item) => {
+            console.log('ListCheckbox:', listCheckbox);
+            console.log('OrderItems:', state?.orderItems);
+            const newOrderItems = [];
+            state?.orderItems?.forEach((item) => {
                 if (listCheckbox.includes(item.product)) {
-                    order.push(item)
+                    newOrderItems.push(item);
                 }
-            })
-            state.selectItemsOrder = order;
-
+            });
+            console.log('NewOrderItems:', newOrderItems);
+            state.selectItemsOrder = newOrderItems;
         }
 
     },

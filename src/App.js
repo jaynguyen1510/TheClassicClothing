@@ -17,18 +17,32 @@ function App() {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
+    // Kiểm tra xem hành động hiện tại có phải là reload hay không
+    const isReload = sessionStorage.getItem("isReload");
 
-    setIsLoading(true);
-    const fetchData = async () => {
-      const { storageData, decoded } = handleDecoded();
-      if (decoded?.id && user) {
-        await handleGetDetailsUser(decoded.id, storageData);
+    const clearLocalStorage = () => {
+      if (!isReload) {
+        // Chỉ xóa localStorage khi không phải là reload
+        localStorage.clear();
       }
     };
-    fetchData();
-    setIsLoading(false);
-  }, []);
 
+    // Gắn sự kiện beforeunload để xóa localStorage khi đóng tab
+    window.addEventListener('beforeunload', clearLocalStorage);
+
+    // Đặt cờ isReload khi trang được reload
+    window.addEventListener('load', () => {
+      sessionStorage.setItem("isReload", "true");
+    });
+
+    // Cleanup function để đảm bảo sự kiện được xóa khi component unmount
+    return () => {
+      window.removeEventListener('beforeunload', clearLocalStorage);
+      window.removeEventListener('load', () => {
+        sessionStorage.setItem("isReload", "true");
+      });
+    };
+  }, []); // Dependency array rỗng để đảm bảo useEffect chỉ chạy một lần khi component mount
 
   const handleDecoded = () => {
     let storageData = localStorage.getItem("access_token");
@@ -62,6 +76,18 @@ function App() {
     dispatch(updateUser({ ...res?.data, access_token: token }));
   };
 
+  useEffect(() => {
+
+    setIsLoading(true);
+    const fetchData = async () => {
+      const { storageData, decoded } = handleDecoded();
+      if (decoded?.id && user) {
+        await handleGetDetailsUser(decoded.id, storageData);
+      }
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div>

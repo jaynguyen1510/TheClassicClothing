@@ -4,6 +4,15 @@ import styled from "styled-components";
 export const WrapperLeft = styled.div`
   width: 910px;
   margin: 20px auto;
+
+  @media (max-width: 1200px) {
+    width: 80%;
+  }
+
+  @media (max-width: 992px) {
+    width: 100%;
+    margin: 10px auto;
+  }
 `;
 
 export const WrapperInfo = styled.div`
@@ -13,6 +22,11 @@ export const WrapperInfo = styled.div`
   border-radius: 10px;
   margin-bottom: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    padding: 15px;
+    margin-bottom: 12px;
+  }
 `;
 
 export const Label = styled.span`
@@ -21,6 +35,11 @@ export const Label = styled.span`
   font-weight: 600;
   margin-bottom: 10px;
   display: block;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
 `;
 
 export const WrapperRadio = styled(Radio.Group)`
@@ -42,6 +61,11 @@ export const WrapperRadio = styled(Radio.Group)`
   .ant-radio-wrapper span {
     font-weight: 600;
   }
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    gap: 10px;
+  }
 `;
 
 export const WrapperRight = styled.div`
@@ -55,6 +79,16 @@ export const WrapperRight = styled.div`
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 1200px) {
+    width: 280px;
+  }
+
+  @media (max-width: 992px) {
+    width: 100%;
+    margin-left: 0;
+    padding: 15px;
+  }
 `;
 
 export const WrapperTotal = styled.div`
@@ -68,4 +102,11 @@ export const WrapperTotal = styled.div`
   font-weight: 600;
   font-size: 16px;
   color: #1a1a1a;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    font-size: 14px;
+  }
 `;

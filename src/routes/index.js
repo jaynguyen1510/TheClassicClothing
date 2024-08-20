@@ -9,6 +9,7 @@ import ProductDetailPage from "~/pages/ProductDetailPage/ProductDetailPage";
 import ProfilePage from "~/pages/Profile/ProfilePage";
 import AdminPage from "~/pages/AdminPage/AdminPage";
 import PayMentPage from "~/pages/PayMentPage/PayMentPage";
+import OrderSuccess from "~/pages/OrderSuccess/OrderSuccess";
 
 export const routes = [
   {
@@ -61,6 +62,12 @@ export const routes = [
   {
     path: "/system/admin",
     page: AdminPage,
+    isShowHeader: false,
+    isPrivate: true
+  },
+  {
+    path: "/orderSuccess",
+    page: OrderSuccess,
     isShowHeader: false,
     isPrivate: true
   },

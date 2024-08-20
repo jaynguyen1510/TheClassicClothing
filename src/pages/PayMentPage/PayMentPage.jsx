@@ -12,11 +12,13 @@ import * as message from '~/components/Message/Message';
 import { Form, Radio } from 'antd';
 import { Label, WrapperInfo, WrapperLeft, WrapperRadio, WrapperRight, WrapperTotal } from './style';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectedOrderItem } from '~/redux/slides/orderSlide';
 import { convertPrice } from '~/ultils';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '~/routes';
+import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
 
 const PayMentPage = () => {
     const formItems = [
@@ -28,7 +30,6 @@ const PayMentPage = () => {
     const user = useSelector((state) => state.user);
     const order = useSelector((state) => state.order);
 
-    const [listCheckbox, setListCheckbox] = useState([]);
     const [delivery, setDelivery] = useState('fast');
     const [payment, setPayment] = useState('later_money');
     const [isOpenModelUpdateInformation, setIsOpenModelUpdateInformation] = useState(false);
@@ -41,6 +42,7 @@ const PayMentPage = () => {
     const [form] = Form.useForm();
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         form.setFieldsValue(sateDetailsUsers);
@@ -107,7 +109,20 @@ const PayMentPage = () => {
                 },
                 {
                     onSuccess: () => {
+                        dispatch(
+                            removeAllOrderProduct({
+                                listCheckbox: order?.selectItemsOrder.map((item) => item?.product),
+                            }),
+                        );
                         message.success('Đặt hàng thành công');
+                        navigate(routes[10].path, {
+                            state: {
+                                delivery,
+                                payment,
+                                order: order?.selectItemsOrder,
+                                resultPriceMemo: resultPriceMemo,
+                            },
+                        });
                     },
                 },
             );
@@ -154,9 +169,11 @@ const PayMentPage = () => {
     };
 
     const priceMemo = useMemo(() => {
-        return order?.selectItemsOrder?.reduce((total, item) => {
+        const total = order?.selectItemsOrder?.reduce((total, item) => {
             return total + item?.price * item?.amount;
         }, 0);
+        console.log(' priceMemo:', total);
+        return total;
     }, [order]);
 
     const priceDiscountMemo = useMemo(() => {
@@ -172,28 +189,20 @@ const PayMentPage = () => {
     }, [order]);
 
     const deliveryPriceMemo = useMemo(() => {
-        if (priceMemo) {
-            return Number(35000);
+        if (priceMemo === 0) {
+            // Khi chưa chọn sản phẩm, phí giao hàng là miễn phí
+            return 0;
+        } else {
+            // Miễn phí giao hàng nếu giá tạm tính >= 400.000 VNĐ
+            return priceMemo >= 400000 ? 0 : 35000;
         }
-        return 0;
     }, [priceMemo]);
+
+    const deliveryPriceString = deliveryPriceMemo === 0 ? 'Miễn Phí' : `${deliveryPriceMemo.toLocaleString()} VNĐ`;
 
     const resultPriceMemo = useMemo(() => {
         return Number(priceMemo + deliveryPriceMemo + priceDiscountMemo);
     }, [deliveryPriceMemo, priceMemo, priceDiscountMemo]);
-
-    const totalDeliveryPriceMemo = useMemo(() => {
-        if (resultPriceMemo === 0) {
-            return 0;
-        } else if (resultPriceMemo < 400000) {
-            return deliveryPriceMemo;
-        } else {
-            return 0;
-        }
-    }, [resultPriceMemo, deliveryPriceMemo]);
-
-    const deliveryPriceString =
-        totalDeliveryPriceMemo === 0 ? 'Miễn Phí' : `${totalDeliveryPriceMemo.toLocaleString()} VNĐ`;
 
     return (
         <>
@@ -215,8 +224,7 @@ const PayMentPage = () => {
                                             </Radio>
                                             <Radio value="viettel_post">
                                                 <span style={{ color: '#ea8500', fontWeight: 'bold' }}>
-                                                    {' '}
-                                                    Viettel Post{' '}
+                                                    Viettel Post
                                                 </span>
                                                 Giao hàng tiết kiệm
                                             </Radio>

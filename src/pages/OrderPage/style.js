@@ -12,10 +12,23 @@ export const WrapperStyleHeader = styled.div`
     font-size: 13px;
     font-weight: 400;
   }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    span {
+      font-size: 12px;
+    }
+  }
 `;
 
 export const WrapperLeft = styled.div`
-  width: 910px;
+  width: 100%;
+  max-width: 910px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const WrapperListOrder = styled.div``;
@@ -26,6 +39,11 @@ export const WrapperItemOrder = styled.div`
   padding: 9px 16px;
   background: #fff;
   margin-top: 12px;
+  border: 1px solid #f5f5f5;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const WrapperPriceDiscount = styled.span`
@@ -41,15 +59,25 @@ export const WrapperCounterOrder = styled.div`
   width: 84px;
   border: 1px solid #ccc;
   border-radius: 4px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const WrapperRight = styled.div`
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   display: flex;
+  flex-direction: column;
   margin-left: 20px;
   gap: 10px;
-  align-items: center;
-  flex-direction: column;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+  }
 `;
 
 export const WrapperInfo = styled.div`
@@ -59,7 +87,10 @@ export const WrapperInfo = styled.div`
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
   width: 100%;
-  
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 export const WrapperTotal = styled.div`
@@ -70,4 +101,9 @@ export const WrapperTotal = styled.div`
   background: #fff;
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;

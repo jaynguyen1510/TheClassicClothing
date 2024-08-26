@@ -77,9 +77,9 @@ const PayMentPage = () => {
         return res;
     });
 
-    const mutationAddOrder = useMutationCustomHook(async (data) => {
+    const mutationAddOrder = useMutationCustomHook((data) => {
         const { token, ...rests } = data;
-        const res = await OrderService.createOrder({ ...rests }, token);
+        const res = OrderService.createOrder({ ...rests }, token);
         return res;
     });
     const handleAddOrder = () => {
@@ -102,6 +102,7 @@ const PayMentPage = () => {
                     phone: user?.phone,
                     city: user?.city,
                     paymentMethod: payment,
+                    deliveryMethod: delivery, // Add delivery method here
                     itemsPrice: priceMemo,
                     shippingPrice: deliveryPriceMemo,
                     totalPrice: resultPriceMemo,

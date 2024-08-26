@@ -10,6 +10,8 @@ import ProfilePage from "~/pages/Profile/ProfilePage";
 import AdminPage from "~/pages/AdminPage/AdminPage";
 import PayMentPage from "~/pages/PayMentPage/PayMentPage";
 import OrderSuccess from "~/pages/OrderSuccess/OrderSuccess";
+import MyOrderPage from "~/pages/MyOrderPage/MyOrderPage";
+import DetailsOrderPage from "~/pages/DetailsOrderPage/DetailsOrderPage";
 
 export const routes = [
   {
@@ -69,7 +71,16 @@ export const routes = [
     path: "/orderSuccess",
     page: OrderSuccess,
     isShowHeader: false,
-    isPrivate: true
+  },
+  {
+    path: "/my-order",
+    page: MyOrderPage,
+    isShowHeader: false,
+  },
+  {
+    path: "/details-my-order/:id", // Không dùng :id
+    page: DetailsOrderPage,
+    isShowHeader: false,
   },
   {
     path: "*",

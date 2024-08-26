@@ -63,7 +63,7 @@ const AdminProduct = () => {
     });
 
     const { isPending: isPendingProduct, data: products } = queryProduct;
-    const [sateProducts, setSateProducts] = useState({
+    const initial = () => ({
         name: '',
         type: '',
         price: '',
@@ -74,17 +74,9 @@ const AdminProduct = () => {
         newType: '',
         discount: '',
     });
+    const [sateProducts, setSateProducts] = useState(initial());
 
-    const [sateDetailsProducts, setSateDetailsProducts] = useState({
-        name: '',
-        type: '',
-        price: '',
-        image: '',
-        rating: '',
-        description: '',
-        discount: '',
-        countInStock: '',
-    });
+    const [sateDetailsProducts, setSateDetailsProducts] = useState(initial());
 
     const [form] = Form.useForm();
 
@@ -139,8 +131,13 @@ const AdminProduct = () => {
     };
 
     useEffect(() => {
-        form.setFieldsValue(sateDetailsProducts);
-    }, [form, sateDetailsProducts]);
+        if (!isModalOpen) {
+            form.setFieldsValue(sateDetailsProducts);
+        } else {
+            form.setFieldsValue(initial());
+        }
+    }, [form, sateDetailsProducts, isModalOpen]);
+    console.log('state', sateDetailsProducts, sateProducts);
 
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {

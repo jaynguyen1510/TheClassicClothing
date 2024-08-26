@@ -172,10 +172,15 @@ const OrderPage = () => {
             mutationUpdate.mutate(
                 { id: user?.id, token: user?.access_token, ...sateDetailsUsers },
                 {
-                    onSuccess: () => {
+                    onSuccess: async () => {
                         dispatch(updateUser({ name, city, address, phone }));
                         setIsOpenModelUpdateInformation(false);
                         message.success('Cập nhật thông tin thành công');
+                        // Reload trang để lấy lại dữ liệu người dùng
+                        window.location.reload();
+                    },
+                    onError: (error) => {
+                        message.error('Cập nhật thông tin thất bại');
                     },
                 },
             );

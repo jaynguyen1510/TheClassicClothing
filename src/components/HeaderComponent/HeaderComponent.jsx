@@ -25,16 +25,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const dispatch = useDispatch();
     const [isPending, setIsPending] = useState(false);
     const [search, setSearch] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
 
     const handelNavigateLogin = () => {
         naviGate(routes[5].path);
     };
-    const handleProfileUser = () => {
-        naviGate(routes[7].path);
-    };
-    const handleAdminPage = () => {
-        naviGate(routes[9].path);
-    };
+
     const handleHomePages = () => {
         naviGate(routes[0].path);
     };
@@ -72,22 +68,49 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
 
     const content = (
         <div>
-            <p className={cx('wrapper-content-popup')} onClick={handleProfileUser}>
+            <p className={cx('wrapper-content-popup')} onClick={() => handleClickNavigate(routes[7].path)}>
                 Thông tin người dùng
             </p>
             {user?.isAdmin && (
-                <p className={cx('wrapper-content-popup')} onClick={handleAdminPage}>
+                <p className={cx('wrapper-content-popup')} onClick={() => handleClickNavigate(routes[9].path)}>
                     Quản lý hệ thống
                 </p>
             )}
-            <p className={cx('wrapper-content-popup')} onClick={handleLogOut}>
+            <p className={cx('wrapper-content-popup')} onClick={() => handleClickNavigate(routes[11].path)}>
+                Đơn hàng của tôi
+            </p>
+            <p className={cx('wrapper-content-popup')} onClick={() => handleClickNavigate()}>
                 Đăng xuất
             </p>
         </div>
     );
+
     const onSearch = (e) => {
         setSearch(e.target.value);
         dispatch(searchProduct(e.target.value));
+    };
+
+    const handleClickNavigate = (type) => {
+        if (!type) {
+            handleLogOut();
+            return;
+        }
+        switch (type) {
+            case routes[7].path:
+                naviGate(routes[7].path);
+                break;
+            case routes[9].path:
+                naviGate(routes[9].path);
+                break;
+            case routes[11].path:
+                naviGate(`${routes[11].path}?id=${user?.id}&token=${user?.access_token}`);
+                break;
+            default:
+                naviGate(type);
+                break;
+        }
+
+        setIsOpen(false);
     };
 
     return (
@@ -117,8 +140,10 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                             )}
                             {user?.access_token ? (
                                 <>
-                                    <Popover content={content} trigger="click">
-                                        <div style={{ cursor: 'pointer' }}>{user?.name || user?.email || 'User'}</div>
+                                    <Popover content={content} trigger="click" open={isOpen}>
+                                        <div style={{ cursor: 'pointer' }} onClick={() => setIsOpen((prev) => !prev)}>
+                                            {user?.name || user?.email || 'User'}
+                                        </div>
                                     </Popover>
                                 </>
                             ) : (

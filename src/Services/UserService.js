@@ -63,9 +63,9 @@ export const getAllUser = async (access_token) => {
     return res.data
 }
 
-export const deleteUser = async (id, data, access_token) => {
+export const deleteUser = async (id, access_token) => {
     try {
-        const res = await axiosJwt.delete(`${process.env.REACT_APP_API_URL_BACKEND}/user/delete-user/${id}`, data, {
+        const res = await axiosJwt.delete(`${process.env.REACT_APP_API_URL_BACKEND}/user/delete-user/${id}`, {
             headers: {
                 token: `Bearer ${access_token}`,
             },

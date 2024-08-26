@@ -36,7 +36,9 @@ const ProductDetailComponent = ({
     const handleLogin = () => {
         navigate(routes[5].path, { state: location?.pathname });
     };
-
+    const handleChangeAddress = () => {
+        navigate(routes[7].path);
+    };
     const handleChange = (value) => {
         setQuantityProduct(Number(value));
     };
@@ -127,13 +129,15 @@ const ProductDetailComponent = ({
                     </div>
                     <div>
                         <Rate allowHalf defaultValue={stars} value={stars} />
-                        <span className={cx('text-sell')}> | Đã bán 1000+ , Kho {productDetails?.countInStock} </span>
+                        <span className={cx('text-sell')}>
+                            | Đã bán {productDetails?.selled} , Kho {productDetails?.countInStock}
+                        </span>
                     </div>
                     <div className={cx('product-price')}>
                         <h1 className={cx('text-price')}>{convertPrice(productDetails?.price)}</h1>
                     </div>
                     <div>
-                        <span onClick={!user?.address ? handleLogin : undefined}>
+                        <span style={{ padding: '10px' }}>
                             {user?.address ? (
                                 <>
                                     <span className={cx('label')}>Giao đến </span>
@@ -142,10 +146,17 @@ const ProductDetailComponent = ({
                                     </span>
                                 </>
                             ) : (
-                                <span className={cx('address')}> Đăng nhập để có địa chỉ </span>
+                                <span className={cx('address')} onClick={!user?.address ? handleLogin : undefined}>
+                                    Vui lòng Cập nhật địa chỉ
+                                </span>
                             )}
                         </span>
-                        -<span className={cx('change-address')}> Đổi địa chỉ</span>
+                        <span
+                            className={cx('change-address')}
+                            onClick={user?.address ? handleChangeAddress : undefined}
+                        >
+                            Đổi địa chỉ
+                        </span>
                         <div className={cx('wrapper-info')}>
                             <div style={{ marginBottom: '12px', marginLeft: '10px' }}>số lượng</div>
                             <div className={cx('wrapper-quality')}>

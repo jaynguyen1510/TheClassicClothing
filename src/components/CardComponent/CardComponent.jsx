@@ -1,5 +1,4 @@
 import React from 'react';
-
 import styles from './CardComponent.module.scss';
 import classNames from 'classnames/bind';
 import imgOffice from '~/assets/images/office.png';
@@ -13,12 +12,21 @@ const cx = classNames.bind(styles);
 
 const CardComponent = ({ id, countInStock, description, image, name, price, rating, type, selled, discount }) => {
     const navigate = useNavigate();
+    const disabled = countInStock === 0;
     const handleDetailsProduct = (id) => {
-        navigate(`/product-detail/${id}`);
+        if (!disabled) {
+            navigate(`/product-detail/${id}`);
+        }
     };
+
     return (
         <div onClick={() => handleDetailsProduct(id)}>
-            <WrapperCardStyle hoverable className={cx('cartComponent')} cover={<img alt="example" src={image} />}>
+            <WrapperCardStyle
+                hoverable
+                className={cx('cartComponent')}
+                cover={<img alt="example" src={image} />}
+                disabled={disabled} // Truyền disabled cho WrapperCardStyle
+            >
                 <img src={imgOffice} alt="office" className={cx('office-img')} />
 
                 <div className={cx('wrapper-text-content')}>
@@ -30,7 +38,8 @@ const CardComponent = ({ id, countInStock, description, image, name, price, rati
                         <StarFilled style={{ fontSize: '12px', color: 'yellow' }} />
                     </span>
                     <span>
-                        | đã bán {selled || 10000} , SL {countInStock}
+                        | đã bán {selled || 10000} , SL :
+                        {countInStock === 0 ? <span style={{ color: 'red' }}> Hết hàng </span> : countInStock}
                     </span>
                 </WrapperReportText>
                 <WrapperPriceText>

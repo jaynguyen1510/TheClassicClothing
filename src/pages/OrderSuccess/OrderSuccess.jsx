@@ -14,14 +14,12 @@ import {
     DeliveryInfoWrapper,
     TotalPriceWrapper,
 } from './style';
-import { useSelector } from 'react-redux';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { convertPrice } from '~/ultils';
 import { useLocation } from 'react-router-dom';
 import { orderConstant } from '~/constant';
 
 const OrderSuccess = () => {
-    const order = useSelector((state) => state.order);
     const location = useLocation();
     const { state } = location;
     console.log('state', state);

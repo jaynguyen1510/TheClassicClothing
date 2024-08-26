@@ -3,12 +3,18 @@ import styled from "styled-components";
 
 export const WrapperCardStyle = styled(Card)`
     width: 200px;
-    & img {
-        height:200px;
-        width:200px;
-    },
     position: relative;
-`
+    background-color: ${({ disabled }) => (disabled ? '#ccc' : '#fff')};
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    
+    img {
+        height: 200px;
+        width: 200px;
+        opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+        transition: opacity 0.3s ease;
+    }
+`;
+
 
 
 export const StyleNameProduct = styled.div`

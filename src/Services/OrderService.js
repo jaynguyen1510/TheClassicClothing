@@ -1,12 +1,10 @@
 // import axios from "axios"
 import { axiosJwt } from "./UserService"
 
-// export const createOrder = async (data) => {
-//     const res = await axios.post(`${process.env.REACT_APP_API_URL_BACKEND}/order/create`, data)
-//     return res.data
-// }
 export const createOrder = async (data, access_token) => {
     try {
+        console.log("data: ", data);
+
         const res = await axiosJwt.post(`${process.env.REACT_APP_API_URL_BACKEND}/order/create`, data, {
             headers: {
                 token: `Bearer ${access_token}`,
@@ -45,10 +43,10 @@ export const getDetailsOrder = async (id, access_token) => {
     }
 };
 
-export const cancelOrderDetails = async (id, data, access_token) => {
+export const cancelOrderDetails = async (id, orderItems, access_token) => {
     try {
         console.log('Token being sent:', access_token);
-        const res = await axiosJwt.delete(`${process.env.REACT_APP_API_URL_BACKEND}/order/cancel-order/${id}`, data, {
+        const res = await axiosJwt.delete(`${process.env.REACT_APP_API_URL_BACKEND}/order/cancel-order/${id}`, { data: orderItems }, {
             headers: {
                 token: `Bearer ${access_token}`,
             },

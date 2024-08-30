@@ -57,6 +57,8 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
 
             // Chuyển hướng về trang chủ sau khi đăng xuất thành công
             naviGate(routes[0].path);
+            // Reload lại trang sau khi chuyển hướng
+            window.location.reload();
         } catch (error) {
             // Xử lý lỗi (nếu có)
             console.error('Error logging out:', error);

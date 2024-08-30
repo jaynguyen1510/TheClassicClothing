@@ -25,7 +25,6 @@ const DetailsOrderPage = () => {
     const params = useParams();
     const location = useLocation();
     const { state } = location;
-    console.log('state', state);
 
     const { id } = params;
 
@@ -45,7 +44,6 @@ const DetailsOrderPage = () => {
     });
 
     const { isLoading: isPendingOrder, data, error } = queryOrder;
-    console.log('data: ', data);
 
     if (isPendingOrder) {
         return <LoadingComponent isPending={true} />;
@@ -120,25 +118,32 @@ const DetailsOrderPage = () => {
                                 <TableCell>Số lượng</TableCell>
                                 <TableCell>Giảm giá</TableCell>
                             </TableHeader>
-                            {orderSelected.map((item, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>
-                                        <img
-                                            src={item?.image}
-                                            alt={item?.name}
-                                            style={{ width: '50px', height: '50px', marginRight: '10px' }}
-                                        />
-                                        {item?.name}
-                                    </TableCell>
-                                    <TableCell>{convertPrice(item?.price)}</TableCell>
-                                    <TableCell>{item?.amount}</TableCell>
-                                    <TableCell>
-                                        {item?.discount
-                                            ? convertPrice(((item.price ?? 0) * (item.discount ?? 0)) / 100)
-                                            : '0 VND'}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {orderSelected.map((item, index) => {
+                                // In thông tin item ra console
+                                console.log('item', item);
+
+                                // Trả về phần tử React TableRow
+                                return (
+                                    <TableRow key={index}>
+                                        <TableCell>
+                                            <img
+                                                src={item?.image}
+                                                alt={item?.name}
+                                                style={{ width: '50px', height: '50px', marginRight: '10px' }}
+                                            />
+                                            {item?.name}
+                                        </TableCell>
+                                        <TableCell>{convertPrice(item?.price)}</TableCell>
+                                        <TableCell>{item?.amount}</TableCell>
+                                        <TableCell>
+                                            {item?.discount
+                                                ? convertPrice(((item.price ?? 0) * (item.discount ?? 0)) / 100)
+                                                : '0 VND'}
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+
                             <WrapperAllPrice>
                                 <TableCell>Tạm tính</TableCell>
                                 <TableCell>{convertPrice(priceMemo)}</TableCell>

@@ -103,11 +103,15 @@ const OrderPage = () => {
         }
     }, [isOpenModelUpdateInformation]);
 
-    const handleChangeCount = (type, idProduct) => {
+    const handleChangeCount = (type, idProduct, limited) => {
         if (type === 'increase') {
-            dispatch(increaseAmount({ idProduct }));
+            if (!limited) {
+                dispatch(increaseAmount({ idProduct }));
+            }
         } else if (type === 'decrease') {
-            dispatch(decreaseAmount({ idProduct }));
+            if (!limited) {
+                dispatch(decreaseAmount({ idProduct }));
+            }
         }
     };
     const handleDeletedOrder = (idProduct) => {
@@ -207,10 +211,10 @@ const OrderPage = () => {
             const discountAmount = Number(item?.price * item?.amount * (item?.discount / 100));
             return total + discountAmount;
         }, 0);
-        if (Number(result)) {
-            return result;
-        }
-        return 0;
+
+        // Giới hạn mức giảm giá tối đa là 50.000 VNĐ
+        const maxDiscount = 50000;
+        return Math.min(result, maxDiscount) || 0;
     }, [order]);
 
     const deliveryPriceMemo = useMemo(() => {
@@ -224,10 +228,15 @@ const OrderPage = () => {
     }, [priceMemo]);
 
     const resultPriceMemo = useMemo(() => {
-        return Number(priceMemo + deliveryPriceMemo + priceDiscountMemo);
+        return Number(priceMemo + deliveryPriceMemo - priceDiscountMemo);
     }, [deliveryPriceMemo, priceMemo, priceDiscountMemo]);
 
-    const deliveryPriceString = deliveryPriceMemo === 0 ? 'Miễn Phí' : `${deliveryPriceMemo.toLocaleString()} VNĐ`;
+    const deliveryPriceString =
+        deliveryPriceMemo === 0 ? (
+            <span style={{ color: 'rgba(0, 128, 0, 0.5)' }}>Miễn Phí</span>
+        ) : (
+            `${deliveryPriceMemo.toLocaleString()} VNĐ`
+        );
     useEffect(() => {
         // Nếu giá tạm tính >= 400.000 VNĐ, thì bước hiện tại là 2
         // Nếu giá tạm tính < 400.000 VNĐ, và có sản phẩm đã chọn, thì bước hiện tại là 1
@@ -339,7 +348,11 @@ const OrderPage = () => {
                                                                 cursor: 'pointer',
                                                             }}
                                                             onClick={() =>
-                                                                handleChangeCount('decrease', orderItem?.product)
+                                                                handleChangeCount(
+                                                                    'decrease',
+                                                                    orderItem?.product,
+                                                                    orderItem?.amount === 1,
+                                                                )
                                                             }
                                                         >
                                                             <MinusOutlined
@@ -349,6 +362,8 @@ const OrderPage = () => {
                                                         <WrapperInputNumber
                                                             defaultValue={orderItem?.amount}
                                                             value={orderItem?.amount}
+                                                            min={1}
+                                                            max={orderItem?.countInStock}
                                                         />
                                                         <button
                                                             style={{
@@ -357,7 +372,11 @@ const OrderPage = () => {
                                                                 cursor: 'pointer',
                                                             }}
                                                             onClick={() =>
-                                                                handleChangeCount('increase', orderItem?.product)
+                                                                handleChangeCount(
+                                                                    'increase',
+                                                                    orderItem?.product,
+                                                                    orderItem?.amount === orderItem?.countInStock,
+                                                                )
                                                             }
                                                         >
                                                             <PlusOutlined style={{ color: '#000', fontSize: '14px' }} />
@@ -413,14 +432,22 @@ const OrderPage = () => {
                                             }}
                                         >
                                             <span>Giảm giá</span>
-                                            <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
-                                                {`${priceDiscountMemo} %`}
+                                            <span
+                                                style={{
+                                                    color: 'rgba(128, 128, 128, 1)',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                }}
+                                            >
+                                                {priceDiscountMemo > 0
+                                                    ? ` - ${convertPrice(priceDiscountMemo)}`
+                                                    : convertPrice(priceDiscountMemo)}
                                             </span>
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <span>Phí giao hàng</span>
-                                            <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
+                                            <span style={{ color: 'red', fontSize: '14px', fontWeight: 'bold' }}>
                                                 {deliveryPriceString}
                                             </span>
                                         </div>

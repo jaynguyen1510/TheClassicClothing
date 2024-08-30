@@ -7,6 +7,7 @@ import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 
 import * as UserService from '~/Services/UserService';
 import * as OrderService from '~/Services/OrderService';
+import * as PaymentService from '~/Services/PaymentService';
 import * as message from '~/components/Message/Message';
 
 import { Form, Radio } from 'antd';
@@ -19,6 +20,7 @@ import { updateUser } from '~/redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
+import { PayPalButton } from 'react-paypal-button-v2';
 
 const PayMentPage = () => {
     const formItems = [
@@ -33,6 +35,7 @@ const PayMentPage = () => {
     const [delivery, setDelivery] = useState('fast');
     const [payment, setPayment] = useState('later_money');
     const [isOpenModelUpdateInformation, setIsOpenModelUpdateInformation] = useState(false);
+    const [sdkReady, setSdkReady] = useState(false);
     const [sateDetailsUsers, setSateDetailsUsers] = useState({
         address: '',
         name: '',
@@ -131,6 +134,44 @@ const PayMentPage = () => {
             message.error('Đặt hàng thất bại');
         }
     };
+    const onSuccessPayPal = (details, data) => {
+        mutationAddOrder.mutate(
+            {
+                token: user?.access_token,
+                orderSelected: order?.selectItemsOrder,
+                fullName: user?.name,
+                address: user?.address,
+                phone: user?.phone,
+                city: user?.city,
+                paymentMethod: payment,
+                deliveryMethod: delivery, // Add delivery method here
+                itemsPrice: priceMemo,
+                shippingPrice: deliveryPriceMemo,
+                totalPrice: resultPriceMemo,
+                user: user?.id,
+                isPaid: true,
+                paidAt: details?.update_time,
+            },
+            {
+                onSuccess: () => {
+                    dispatch(
+                        removeAllOrderProduct({
+                            listCheckbox: order?.selectItemsOrder.map((item) => item?.product),
+                        }),
+                    );
+                    message.success('Đặt hàng thành công');
+                    navigate(routes[10].path, {
+                        state: {
+                            delivery,
+                            payment,
+                            order: order?.selectItemsOrder,
+                            resultPriceMemo: resultPriceMemo,
+                        },
+                    });
+                },
+            },
+        );
+    };
 
     const { isPending: isLoading, data } = mutationUpdate;
 
@@ -183,10 +224,10 @@ const PayMentPage = () => {
             const discountAmount = Number(item?.price * item?.amount * (item?.discount / 100));
             return total + discountAmount;
         }, 0);
-        if (Number(result)) {
-            return result;
-        }
-        return 0;
+
+        // Giới hạn mức giảm giá tối đa là 50.000 VNĐ
+        const maxDiscount = 50000;
+        return Math.min(result, maxDiscount) || 0;
     }, [order]);
 
     const deliveryPriceMemo = useMemo(() => {
@@ -199,11 +240,36 @@ const PayMentPage = () => {
         }
     }, [priceMemo]);
 
-    const deliveryPriceString = deliveryPriceMemo === 0 ? 'Miễn Phí' : `${deliveryPriceMemo.toLocaleString()} VNĐ`;
+    const deliveryPriceString =
+        deliveryPriceMemo === 0 ? (
+            <span style={{ color: 'rgba(0, 128, 0, 0.5)' }}>Miễn Phí</span>
+        ) : (
+            `${deliveryPriceMemo.toLocaleString()} VNĐ`
+        );
 
     const resultPriceMemo = useMemo(() => {
-        return Number(priceMemo + deliveryPriceMemo + priceDiscountMemo);
+        return Number(priceMemo + deliveryPriceMemo - priceDiscountMemo);
     }, [deliveryPriceMemo, priceMemo, priceDiscountMemo]);
+
+    const addPaypalScript = async () => {
+        const { data } = await PaymentService.getConfig();
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
+        script.async = true;
+        script.onload = () => {
+            setSdkReady(true);
+        };
+        document.body.appendChild(script);
+    };
+
+    useEffect(() => {
+        if (!window.paypal) {
+            addPaypalScript();
+        } else {
+            setSdkReady(true);
+        }
+    }, []);
 
     return (
         <>
@@ -283,14 +349,22 @@ const PayMentPage = () => {
                                             }}
                                         >
                                             <span>Giảm giá</span>
-                                            <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
-                                                {`${priceDiscountMemo} %`}
+                                            <span
+                                                style={{
+                                                    color: 'rgba(128, 128, 128, 1)',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                }}
+                                            >
+                                                {priceDiscountMemo > 0
+                                                    ? ` - ${convertPrice(priceDiscountMemo)}`
+                                                    : convertPrice(priceDiscountMemo)}
                                             </span>
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <span>Phí giao hàng</span>
-                                            <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
+                                            <span style={{ color: 'red', fontSize: '14px', fontWeight: 'bold' }}>
                                                 {deliveryPriceString}
                                             </span>
                                         </div>
@@ -309,25 +383,42 @@ const PayMentPage = () => {
                                         </span>
                                     </WrapperTotal>
                                 </div>
-                                <ButtonComponent
-                                    size={40}
-                                    onClick={handleAddOrder}
-                                    styleButton={{
-                                        background: 'rgba(244, 186, 186, 0.5)',
-                                        height: '48px',
-                                        width: '320px',
-                                        border: 'none',
-                                        borderRadius: '4px',
-                                        fontSize: '15px',
-                                        fontWeight: '700',
-                                    }}
-                                    textButton={'Mua hàng'}
-                                    styleTextButton={{
-                                        color: 'rgba(255, 182, 193, 1)',
-                                        fontSize: '15px',
-                                        fontWeight: 'bold',
-                                    }}
-                                />
+                                {payment === 'paypal' && sdkReady ? (
+                                    <div
+                                        style={{
+                                            width: '320px',
+                                        }}
+                                    >
+                                        <PayPalButton
+                                            amount={resultPriceMemo}
+                                            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                                            onSuccess={onSuccessPayPal}
+                                            onError={() => {
+                                                alert('Error saving transaction');
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <ButtonComponent
+                                        size={40}
+                                        onClick={handleAddOrder}
+                                        styleButton={{
+                                            background: 'rgba(244, 186, 186, 0.5)',
+                                            height: '48px',
+                                            width: '320px',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            fontSize: '15px',
+                                            fontWeight: '700',
+                                        }}
+                                        textButton={'Mua hàng'}
+                                        styleTextButton={{
+                                            color: 'rgba(255, 182, 193, 1)',
+                                            fontSize: '15px',
+                                            fontWeight: 'bold',
+                                        }}
+                                    />
+                                )}
                             </WrapperRight>
                         </div>
                     </div>

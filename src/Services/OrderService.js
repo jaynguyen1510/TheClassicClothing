@@ -5,7 +5,7 @@ export const createOrder = async (data, access_token) => {
     try {
         console.log("data: ", data);
 
-        const res = await axiosJwt.post(`${process.env.REACT_APP_API_URL_BACKEND}/order/create`, data, {
+        const res = await axiosJwt.post(`${process.env.REACT_APP_API_ZALO_BACKEND}/order/create`, data, {
             headers: {
                 token: `Bearer ${access_token}`,
             },

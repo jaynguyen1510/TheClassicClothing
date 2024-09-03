@@ -5,6 +5,7 @@ export const orderConstant = {
     },
     payment: {
         later_money: "Thanh toán khi nhận hàng",
-        paypal: 'Thanh toán bằng PayPal'
+        paypal: 'Thanh toán bằng PayPal',
+        zalopay: 'Thanh toán bằng ZaloPay'
     }
 }

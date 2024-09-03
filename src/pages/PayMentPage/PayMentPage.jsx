@@ -4,10 +4,12 @@ import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
 import ModalComponent from '~/components/ModalComponent/ModalComponent';
 import InputComponent from '~/components/InputComponent/InputComponent';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import ZaloPayIcon from '~/assets/images/zaloPay.png';
 
 import * as UserService from '~/Services/UserService';
 import * as OrderService from '~/Services/OrderService';
 import * as PaymentService from '~/Services/PaymentService';
+import * as ZaloPayService from '~/Services/ZaloPayService';
 import * as message from '~/components/Message/Message';
 
 import { Form, Radio } from 'antd';
@@ -17,10 +19,11 @@ import { convertPrice } from '~/ultils';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
 import { PayPalButton } from 'react-paypal-button-v2';
+import { useQuery } from '@tanstack/react-query';
 
 const PayMentPage = () => {
     const formItems = [
@@ -29,8 +32,13 @@ const PayMentPage = () => {
         { label: 'Số điện thoại', name: 'phone', message: 'Vui lòng nhập phone' },
         { label: 'Địa chỉ', name: 'address', message: 'Vui lòng nhập địa chỉ ' },
     ];
+    const [hasRun, setHasRun] = useState(false);
     const user = useSelector((state) => state.user);
     const order = useSelector((state) => state.order);
+    // lấy app_trans_id từ đường dẫn URL
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const app_trans_id = queryParams.get('app_trans_id');
 
     const [delivery, setDelivery] = useState('fast');
     const [payment, setPayment] = useState('later_money');
@@ -62,6 +70,89 @@ const PayMentPage = () => {
         }
     }, [isOpenModelUpdateInformation]);
 
+    const fetchZaloPaySuccess = async () => {
+        if (!app_trans_id) throw new Error('Transaction ID is required');
+        try {
+            const response = await ZaloPayService.orderSuccess(app_trans_id);
+            return response.data;
+        } catch (error) {
+            throw new Error('Failed to fetch order details');
+        }
+    };
+
+    const queryOrder = useQuery({
+        queryKey: ['zalopay', app_trans_id],
+        queryFn: fetchZaloPaySuccess,
+        enabled: !!app_trans_id,
+    });
+    const { isPending: isPendingZaloPay } = queryOrder;
+
+    useEffect(() => {
+        // Kiểm tra các điều kiện cần thiết trước khi gọi mutate
+        if (app_trans_id && user && order && payment && delivery && !hasRun) {
+            const zaloPayData = localStorage.getItem('zaloPay');
+            if (zaloPayData) {
+                const sendOrder = JSON.parse(zaloPayData);
+
+                // Đảm bảo rằng sendOrder có đầy đủ thông tin cần thiết
+                if (
+                    sendOrder?.orderSelected &&
+                    sendOrder?.fullName &&
+                    sendOrder?.address &&
+                    sendOrder?.phone &&
+                    sendOrder?.city &&
+                    sendOrder?.paymentMethod &&
+                    sendOrder?.deliveryMethod &&
+                    sendOrder?.itemsPrice != null &&
+                    sendOrder?.shippingPrice != null &&
+                    sendOrder?.totalPrice != null &&
+                    sendOrder?.user &&
+                    sendOrder?.isPaid != null
+                ) {
+                    // Thêm đơn hàng vào server
+                    mutationAddOrder.mutate(
+                        {
+                            orderSelected: sendOrder.orderSelected,
+                            fullName: sendOrder.fullName,
+                            address: sendOrder.address,
+                            phone: sendOrder.phone,
+                            city: sendOrder.city,
+                            paymentMethod: sendOrder.paymentMethod,
+                            deliveryMethod: sendOrder.deliveryMethod,
+                            itemsPrice: sendOrder.itemsPrice,
+                            shippingPrice: sendOrder.shippingPrice,
+                            totalPrice: sendOrder.totalPrice,
+                            user: sendOrder.user,
+                            isPaid: sendOrder.isPaid,
+                        },
+                        {
+                            onSuccess: () => {
+                                dispatch(
+                                    removeAllOrderProduct({
+                                        listCheckbox: order.selectItemsOrder.map((item) => item.product),
+                                    }),
+                                );
+                                // Xóa key 'zalopay' khỏi localStorage sau khi thành công
+                                localStorage.removeItem('zaloPay');
+                                message.success('Đặt hàng thành công');
+                                navigate(routes[10].path, {
+                                    state: {
+                                        delivery: sendOrder.deliveryMethod,
+                                        payment: sendOrder.paymentMethod,
+                                        order: sendOrder.orderSelected,
+                                        resultPriceMemo: sendOrder.totalPrice,
+                                    },
+                                });
+                                // Cập nhật trạng thái đã chạy để không thực hiện lại
+                                setHasRun(true);
+                            },
+                        },
+                    );
+                }
+            }
+        }
+    }, [app_trans_id, user, hasRun]);
+
     const handleCancelUpdate = () => {
         setSateDetailsUsers({
             name: '',
@@ -74,17 +165,6 @@ const PayMentPage = () => {
         setIsOpenModelUpdateInformation(false);
     };
 
-    const mutationUpdate = useMutationCustomHook(async (data) => {
-        const { id, token, ...rests } = data;
-        const res = await UserService.updateUser(id, { ...rests }, token);
-        return res;
-    });
-
-    const mutationAddOrder = useMutationCustomHook((data) => {
-        const { token, ...rests } = data;
-        const res = OrderService.createOrder({ ...rests }, token);
-        return res;
-    });
     const handleAddOrder = () => {
         if (
             user?.access_token &&
@@ -173,6 +253,17 @@ const PayMentPage = () => {
         );
     };
 
+    const mutationUpdate = useMutationCustomHook(async (data) => {
+        const { id, token, ...rests } = data;
+        const res = await UserService.updateUser(id, { ...rests }, token);
+        return res;
+    });
+
+    const mutationAddOrder = useMutationCustomHook((data) => {
+        const { token, ...rests } = data;
+        const res = OrderService.createOrder({ ...rests }, token);
+        return res;
+    });
     const { isPending: isLoading, data } = mutationUpdate;
 
     const { isPending: isLoadingOrder, data: dataOrder } = mutationAddOrder;
@@ -207,6 +298,8 @@ const PayMentPage = () => {
         setDelivery(e.target.value);
     };
     const handlePayment = (e) => {
+        console.log('Payment :', e.target.value);
+
         setPayment(e.target.value);
     };
 
@@ -214,7 +307,6 @@ const PayMentPage = () => {
         const total = order?.selectItemsOrder?.reduce((total, item) => {
             return total + item?.price * item?.amount;
         }, 0);
-        console.log(' priceMemo:', total);
         return total;
     }, [order]);
 
@@ -263,6 +355,51 @@ const PayMentPage = () => {
         document.body.appendChild(script);
     };
 
+    const mutationZaloPay = useMutationCustomHook(async () => {
+        const orderDetails = {
+            orderSelected: order?.selectItemsOrder || [],
+            user: user?.id || 'default_user',
+            itemsPrice: resultPriceMemo || 0,
+        };
+        const result = await ZaloPayService.createZaloPayPayment(orderDetails);
+        return result;
+    });
+    const handleZaloPay = async () => {
+        const dataZaloPay = {
+            token: user.access_token,
+            orderSelected: order.selectItemsOrder,
+            fullName: user.name,
+            address: user.address,
+            phone: user.phone,
+            city: user.city,
+            paymentMethod: payment,
+            deliveryMethod: delivery,
+            itemsPrice: priceMemo,
+            shippingPrice: deliveryPriceMemo,
+            totalPrice: resultPriceMemo,
+            user: user.id,
+            isPaid: true,
+        };
+        localStorage.setItem('zaloPay', JSON.stringify(dataZaloPay));
+        mutationZaloPay.mutate(
+            {},
+            {
+                onSuccess: (result) => {
+                    if (result && result.redirect_url && result.redirect_url.order_url) {
+                        // Điều hướng đến liên kết thanh toán
+                        window.location.href = result.redirect_url.order_url;
+                    } else {
+                        console.error('Redirect URL is missing in the result:', result);
+                    }
+                },
+                onError: (error) => {
+                    // Xử lý lỗi
+                    console.error('Error during mutation:', error);
+                },
+            },
+        );
+    };
+
     useEffect(() => {
         if (!window.paypal) {
             addPaypalScript();
@@ -274,8 +411,8 @@ const PayMentPage = () => {
     return (
         <>
             <HeaderComponent isHiddenSearch />
-
-            <LoadingComponent isPending={isLoadingOrder}>
+            {/* <LoadingComponent isPending={isLoadingOrder}> */}
+            <LoadingComponent isPending={isLoadingOrder || (app_trans_id && isPendingZaloPay)}>
                 <div style={{ background: '#f5f5fa', width: '100%', height: '100vh' }}>
                     <div style={{ width: '1270px', margin: '0 auto', padding: '20px' }}>
                         <h3>Giao hàng</h3>
@@ -306,7 +443,10 @@ const PayMentPage = () => {
                                                 Thanh toán tiền mặt khi nhận hàng
                                             </Radio>
                                             <Radio value="paypal" style={{ color: '#ea8500', fontWeight: 'bold' }}>
-                                                Thanh toán tiền bằng PayPal
+                                                Thanh toán bằng PayPal
+                                            </Radio>
+                                            <Radio value="zalopay" style={{ color: '#ea8500', fontWeight: 'bold' }}>
+                                                Thanh toán bằng zaloPay
                                             </Radio>
                                         </WrapperRadio>
                                     </div>
@@ -384,11 +524,7 @@ const PayMentPage = () => {
                                     </WrapperTotal>
                                 </div>
                                 {payment === 'paypal' && sdkReady ? (
-                                    <div
-                                        style={{
-                                            width: '320px',
-                                        }}
-                                    >
+                                    <div style={{ width: '320px' }}>
                                         <PayPalButton
                                             amount={resultPriceMemo}
                                             // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
@@ -398,6 +534,17 @@ const PayMentPage = () => {
                                             }}
                                         />
                                     </div>
+                                ) : payment === 'zalopay' && sdkReady ? (
+                                    <img
+                                        src={ZaloPayIcon}
+                                        alt="ZaloPay"
+                                        style={{
+                                            width: '90px',
+                                            padding: '10px',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={handleZaloPay}
+                                    />
                                 ) : (
                                     <ButtonComponent
                                         size={40}

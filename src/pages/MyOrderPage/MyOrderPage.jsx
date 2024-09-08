@@ -49,7 +49,6 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
     });
 
     const { isPending: isPendingOrder, data } = queryOrder;
-    console.log('data', data);
 
     const handleDetailsOrder = (id) => {
         navigate(`${routes[12].path.replace(':id', id)}`, {
@@ -60,16 +59,14 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
     };
 
     const mutation = useMutationCustomHook(async (data) => {
-        const { id, access_token, orderItems } = data;
-        console.log('Sending data:', orderItems);
-        const res = await OrderService.cancelOrderDetails(id, orderItems, access_token);
+        const { id, orderItems } = data;
+        const res = await OrderService.cancelOrderDetails(id, orderItems);
         return res;
     });
 
     const handleRemoveProduct = (order) => {
-        console.log('order', order);
         mutation.mutate(
-            { id: order?._id, access_token: user?.access_token, orderItems: order?.orderSelected },
+            { id: order?._id, orderItems: order?.orderSelected },
             {
                 onSuccess: () => {
                     queryOrder.refetch();
@@ -174,7 +171,11 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
                                         </DetailsRow>
                                         <DetailsRow>
                                             <Label>Tiền vận chuyển :</Label>
-                                            <Value>{convertPrice(order.shippingPrice)}</Value>
+                                            <Value>
+                                                {order.shippingPrice === 0
+                                                    ? 'Miễn phí'
+                                                    : convertPrice(order.shippingPrice)}
+                                            </Value>
                                         </DetailsRow>
                                         <DetailsRow>
                                             <Label>Tổng cộng :</Label>

@@ -15,6 +15,7 @@ const initialState = {
     paidAt: '',
     isDelivered: false,
     deliveredAt: '',
+    isSuccessOrder: false,
 };
 
 export const orderProductSlide = createSlice({
@@ -26,11 +27,21 @@ export const orderProductSlide = createSlice({
             const itemsOrderItem = state?.orderItems?.find((items) => items?.product === orderItems.product)
 
             if (itemsOrderItem) {
-                itemsOrderItem.amount += orderItems?.amount
+                if (itemsOrderItem.amount < itemsOrderItem.countInStock) {
+                    itemsOrderItem.amount += orderItems?.amount
+                    state.isSuccessOrder = true
 
+                }
             } else {
+                // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới vào giỏ hàng
                 state.orderItems.push(orderItems);
+                state.isSuccessOrder = true;
             }
+
+        },
+        resetOrder: (state) => {
+            // Reset trạng thái trước khi xử lý
+            state.isSuccessOrder = false;
         },
         increaseAmount: (state, action) => {
             const { idProduct } = action.payload;
@@ -95,5 +106,5 @@ export const orderProductSlide = createSlice({
     },
 });
 
-export const { addOrderProduct, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, selectedOrderItem } = orderProductSlide.actions;
+export const { addOrderProduct, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, selectedOrderItem, resetOrder } = orderProductSlide.actions;
 export default orderProductSlide.reducer;

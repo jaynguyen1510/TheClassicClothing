@@ -12,6 +12,7 @@ import PayMentPage from "~/pages/PayMentPage/PayMentPage";
 import OrderSuccess from "~/pages/OrderSuccess/OrderSuccess";
 import MyOrderPage from "~/pages/MyOrderPage/MyOrderPage";
 import DetailsOrderPage from "~/pages/DetailsOrderPage/DetailsOrderPage";
+import ReloadZaloPaySuccessPage from "~/pages/ReloadZaloPaySuccessPage/ReloadZaloPaySuccessPage";
 
 export const routes = [
   {
@@ -80,6 +81,11 @@ export const routes = [
   {
     path: "/details-my-order/:id", // Không dùng :id
     page: DetailsOrderPage,
+    isShowHeader: false,
+  },
+  {
+    path: "/zalopay-success", // Không dùng :id
+    page: ReloadZaloPaySuccessPage,
     isShowHeader: false,
   },
   {

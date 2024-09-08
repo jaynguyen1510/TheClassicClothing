@@ -19,11 +19,10 @@ import { convertPrice } from '~/ultils';
 import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
 import { PayPalButton } from 'react-paypal-button-v2';
-import { useQuery } from '@tanstack/react-query';
 
 const PayMentPage = () => {
     const formItems = [
@@ -32,13 +31,8 @@ const PayMentPage = () => {
         { label: 'Số điện thoại', name: 'phone', message: 'Vui lòng nhập phone' },
         { label: 'Địa chỉ', name: 'address', message: 'Vui lòng nhập địa chỉ ' },
     ];
-    const [hasRun, setHasRun] = useState(false);
     const user = useSelector((state) => state.user);
     const order = useSelector((state) => state.order);
-    // lấy app_trans_id từ đường dẫn URL
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const app_trans_id = queryParams.get('app_trans_id');
 
     const [delivery, setDelivery] = useState('fast');
     const [payment, setPayment] = useState('later_money');
@@ -70,89 +64,6 @@ const PayMentPage = () => {
         }
     }, [isOpenModelUpdateInformation]);
 
-    const fetchZaloPaySuccess = async () => {
-        if (!app_trans_id) throw new Error('Transaction ID is required');
-        try {
-            const response = await ZaloPayService.orderSuccess(app_trans_id);
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to fetch order details');
-        }
-    };
-
-    const queryOrder = useQuery({
-        queryKey: ['zalopay', app_trans_id],
-        queryFn: fetchZaloPaySuccess,
-        enabled: !!app_trans_id,
-    });
-    const { isPending: isPendingZaloPay } = queryOrder;
-
-    useEffect(() => {
-        // Kiểm tra các điều kiện cần thiết trước khi gọi mutate
-        if (app_trans_id && user && order && payment && delivery && !hasRun) {
-            const zaloPayData = localStorage.getItem('zaloPay');
-            if (zaloPayData) {
-                const sendOrder = JSON.parse(zaloPayData);
-
-                // Đảm bảo rằng sendOrder có đầy đủ thông tin cần thiết
-                if (
-                    sendOrder?.orderSelected &&
-                    sendOrder?.fullName &&
-                    sendOrder?.address &&
-                    sendOrder?.phone &&
-                    sendOrder?.city &&
-                    sendOrder?.paymentMethod &&
-                    sendOrder?.deliveryMethod &&
-                    sendOrder?.itemsPrice != null &&
-                    sendOrder?.shippingPrice != null &&
-                    sendOrder?.totalPrice != null &&
-                    sendOrder?.user &&
-                    sendOrder?.isPaid != null
-                ) {
-                    // Thêm đơn hàng vào server
-                    mutationAddOrder.mutate(
-                        {
-                            orderSelected: sendOrder.orderSelected,
-                            fullName: sendOrder.fullName,
-                            address: sendOrder.address,
-                            phone: sendOrder.phone,
-                            city: sendOrder.city,
-                            paymentMethod: sendOrder.paymentMethod,
-                            deliveryMethod: sendOrder.deliveryMethod,
-                            itemsPrice: sendOrder.itemsPrice,
-                            shippingPrice: sendOrder.shippingPrice,
-                            totalPrice: sendOrder.totalPrice,
-                            user: sendOrder.user,
-                            isPaid: sendOrder.isPaid,
-                        },
-                        {
-                            onSuccess: () => {
-                                dispatch(
-                                    removeAllOrderProduct({
-                                        listCheckbox: order.selectItemsOrder.map((item) => item.product),
-                                    }),
-                                );
-                                // Xóa key 'zalopay' khỏi localStorage sau khi thành công
-                                localStorage.removeItem('zaloPay');
-                                message.success('Đặt hàng thành công');
-                                navigate(routes[10].path, {
-                                    state: {
-                                        delivery: sendOrder.deliveryMethod,
-                                        payment: sendOrder.paymentMethod,
-                                        order: sendOrder.orderSelected,
-                                        resultPriceMemo: sendOrder.totalPrice,
-                                    },
-                                });
-                                // Cập nhật trạng thái đã chạy để không thực hiện lại
-                                setHasRun(true);
-                            },
-                        },
-                    );
-                }
-            }
-        }
-    }, [app_trans_id, user, hasRun]);
-
     const handleCancelUpdate = () => {
         setSateDetailsUsers({
             name: '',
@@ -170,6 +81,7 @@ const PayMentPage = () => {
             user?.access_token &&
             order?.selectItemsOrder &&
             user?.name &&
+            user?.email &&
             user?.address &&
             user?.phone &&
             user?.city &&
@@ -181,6 +93,7 @@ const PayMentPage = () => {
                     token: user?.access_token,
                     orderSelected: order?.selectItemsOrder,
                     fullName: user?.name,
+                    email: user?.email,
                     address: user?.address,
                     phone: user?.phone,
                     city: user?.city,
@@ -412,7 +325,7 @@ const PayMentPage = () => {
         <>
             <HeaderComponent isHiddenSearch />
             {/* <LoadingComponent isPending={isLoadingOrder}> */}
-            <LoadingComponent isPending={isLoadingOrder || (app_trans_id && isPendingZaloPay)}>
+            <LoadingComponent isPending={isLoadingOrder}>
                 <div style={{ background: '#f5f5fa', width: '100%', height: '100vh' }}>
                     <div style={{ width: '1270px', margin: '0 auto', padding: '20px' }}>
                         <h3>Giao hàng</h3>

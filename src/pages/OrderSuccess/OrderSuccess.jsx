@@ -22,11 +22,10 @@ import { orderConstant } from '~/constant';
 const OrderSuccess = () => {
     const location = useLocation();
     const { state } = location;
-    console.log('state', state);
 
     return (
         <>
-            <HeaderComponent isHiddenSearch />
+            <HeaderComponent isHiddenSearch isHiddenCart />
 
             <LoadingComponent isPending={false}>
                 <WrapperContainer>

@@ -14,9 +14,7 @@ const CardComponent = ({ id, countInStock, description, image, name, price, rati
     const navigate = useNavigate();
     const disabled = countInStock === 0;
     const handleDetailsProduct = (id) => {
-        if (!disabled) {
-            navigate(`/product-detail/${id}`);
-        }
+        navigate(`/product-detail/${id}`);
     };
 
     return (

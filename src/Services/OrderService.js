@@ -5,7 +5,7 @@ export const createOrder = async (data, access_token) => {
     try {
         console.log("data: ", data);
 
-        const res = await axiosJwt.post(`${process.env.REACT_APP_API_ZALO_BACKEND}/order/create`, data, {
+        const res = await axiosJwt.post(`${process.env.REACT_APP_API_URL_BACKEND}/order/create`, data, {
             headers: {
                 token: `Bearer ${access_token}`,
             },
@@ -17,6 +17,7 @@ export const createOrder = async (data, access_token) => {
 };
 // localhost:3001/api/order/get-order-details/66791b4c1958e990a0e58633
 export const getOrderByUserId = async (id, access_token) => {
+
     try {
         const res = await axiosJwt.get(`${process.env.REACT_APP_API_URL_BACKEND}/order/get-order-all/${id}`, {
             headers: {
@@ -45,7 +46,6 @@ export const getDetailsOrder = async (id, access_token) => {
 
 export const cancelOrderDetails = async (id, orderItems, access_token) => {
     try {
-        console.log('Token being sent:', access_token);
         const res = await axiosJwt.delete(`${process.env.REACT_APP_API_URL_BACKEND}/order/cancel-order/${id}`, { data: orderItems }, {
             headers: {
                 token: `Bearer ${access_token}`,

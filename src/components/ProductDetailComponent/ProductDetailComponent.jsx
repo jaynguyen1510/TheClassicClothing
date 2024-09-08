@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './ProductDetailComponent.module.scss';
@@ -15,7 +15,7 @@ import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
-import { addOrderProduct } from '~/redux/slides/orderSlide';
+import { addOrderProduct, resetOrder } from '~/redux/slides/orderSlide';
 import { convertPrice } from '~/ultils';
 
 const cx = classNames.bind(styles);
@@ -29,64 +29,14 @@ const ProductDetailComponent = ({
     colorButton = '#fff',
 }) => {
     const [quantityProduct, setQuantityProduct] = useState(1);
+    const [errorLimitOrder, setErrorLimitOrder] = useState(false);
     const location = useLocation();
     const user = useSelector((state) => state.user);
+    const order = useSelector((state) => state.order);
+    console.log('order', order);
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const handleLogin = () => {
-        navigate(routes[5].path, { state: location?.pathname });
-    };
-    const handleChangeAddress = () => {
-        navigate(routes[7].path);
-    };
-    const handleChange = (value) => {
-        setQuantityProduct(Number(value));
-    };
-    const handleChangeCount = (type) => {
-        if (type === 'decrease') {
-            if (quantityProduct > 1) {
-                setQuantityProduct(quantityProduct - 1);
-            }
-        } else if (type === 'increase') {
-            if (quantityProduct < 20) {
-                setQuantityProduct(quantityProduct + 1);
-            }
-        }
-    };
-    const handleAddProduct = () => {
-        if (!user?.id) {
-            setTimeout(() => {
-                message.error('Vui lòng đăng nhập để mua hàng');
-                navigate(routes[5].path, { state: location?.pathname });
-            }, 300);
-        } else {
-            // navigate(routes[1].path);
-            // {
-            //     name: { type: String, required: true },
-            //     amount: { type: Number, required: true },
-            //     image: { type: String, required: true },
-            //     price: { type: Number, required: true },
-            //     product: {
-            //         type: mongoose.Schema.Types.ObjectId,
-            //         ref: "Product",
-            //         required: true
-            //     },
-            // },
-            dispatch(
-                addOrderProduct({
-                    orderItems: {
-                        name: productDetails?.name,
-                        amount: quantityProduct,
-                        image: productDetails?.image,
-                        price: productDetails?.price,
-                        product: productDetails?._id,
-                        discount: productDetails?.discount,
-                        countInStock: productDetails?.countInStock,
-                    },
-                }),
-            );
-        }
-    };
 
     const fetchDetailsProduct = async (context) => {
         const id = context?.queryKey && context?.queryKey[1];
@@ -101,6 +51,77 @@ const ProductDetailComponent = ({
         queryFn: fetchDetailsProduct,
         enabled: !!idProduct,
     });
+    const handleLogin = () => {
+        navigate(routes[5].path, { state: location?.pathname });
+    };
+    const handleChangeAddress = () => {
+        navigate(routes[7].path);
+    };
+    const handleChange = (value) => {
+        setQuantityProduct(Number(value));
+    };
+
+    const handleChangeCount = (type) => {
+        if (type === 'decrease') {
+            if (quantityProduct > 1) {
+                setQuantityProduct(quantityProduct - 1);
+            }
+        } else if (type === 'increase') {
+            if (quantityProduct < 20) {
+                setQuantityProduct(quantityProduct + 1);
+            }
+        }
+    };
+
+    useEffect(() => {
+        const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
+        if (
+            orderRedux?.amount + quantityProduct <= orderRedux?.countInStock ||
+            (!orderRedux && productDetails?.countInStock > 0)
+        ) {
+            setErrorLimitOrder(false);
+        } else if (productDetails?.countInStock === 0) {
+            setErrorLimitOrder(true);
+        }
+    }, [quantityProduct]);
+
+    const handleAddProduct = () => {
+        if (!user?.id) {
+            setTimeout(() => {
+                message.error('Vui lòng đăng nhập để mua hàng');
+                navigate(routes[5].path, { state: location?.pathname });
+            }, 300);
+        } else {
+            const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
+
+            if (
+                orderRedux?.amount + quantityProduct <= orderRedux?.countInStock ||
+                (!orderRedux && productDetails?.countInStock > 0)
+            ) {
+                dispatch(
+                    addOrderProduct({
+                        orderItems: {
+                            name: productDetails?.name,
+                            amount: quantityProduct,
+                            image: productDetails?.image,
+                            price: productDetails?.price,
+                            product: productDetails?._id,
+                            discount: productDetails?.discount,
+                            countInStock: productDetails?.countInStock,
+                        },
+                    }),
+                );
+            } else {
+                setErrorLimitOrder(true);
+            }
+        }
+    };
+    useEffect(() => {
+        if (order?.isSuccessOrder) {
+            message.success('Đã thêm vào giỏ hàng thành công');
+            dispatch(resetOrder()); // Reset lại trạng thái sau khi hiển thị thông báo
+        }
+    }, [order?.isSuccessOrder, dispatch]);
 
     const stars = productDetails?.rating;
     // console.log('order bring together', productDetails, user);
@@ -172,20 +193,23 @@ const ProductDetailComponent = ({
                             </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 12px' }}>
-                            <ButtonComponent
-                                bordered={undefined}
-                                size={size}
-                                style={{
-                                    height: '48px',
-                                    width: '220px',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    backgroundColor: backgroundColorButton,
-                                    color: colorButton,
-                                }}
-                                onClick={handleAddProduct}
-                                textButton={'Mua'}
-                            />
+                            <div>
+                                <ButtonComponent
+                                    bordered={undefined}
+                                    size={size}
+                                    style={{
+                                        height: '48px',
+                                        width: '220px',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        backgroundColor: backgroundColorButton,
+                                        color: colorButton,
+                                    }}
+                                    onClick={handleAddProduct}
+                                    textButton={'Mua'}
+                                />
+                                {errorLimitOrder && <div style={{ color: 'red' }}>Sản phẩm hết hàng</div>}
+                            </div>
                             <ButtonComponent
                                 bordered={undefined}
                                 size={size}

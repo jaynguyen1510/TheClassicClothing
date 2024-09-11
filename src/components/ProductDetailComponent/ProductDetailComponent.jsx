@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './ProductDetailComponent.module.scss';
 
 import imageSmall from '~/assets/images/ao-day.png';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
+import LikeButtonComponent from '../LikeButtonComponent/LikeButtonComponent';
+import CommentFbComponent from '../CommentFbComponent/CommentFbComponent';
 import * as ProductService from '~/Services/ProductService';
 
-import { WrapperInputNumber } from './style';
+import { ButtonWrapper, WrapperInputNumber } from './style';
 import { Col, Image, message, Rate, Row } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { addOrderProduct, resetOrder } from '~/redux/slides/orderSlide';
-import { convertPrice } from '~/ultils';
+import { convertPrice, initFacebookSDK } from '~/ultils';
 
 const cx = classNames.bind(styles);
 
@@ -33,10 +35,12 @@ const ProductDetailComponent = ({
     const location = useLocation();
     const user = useSelector((state) => state.user);
     const order = useSelector((state) => state.order);
-    console.log('order', order);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    // const memoCurrentLink = useMemo(() => {
+    //     const link = process.env.REACT_APP_IS_LOCAL ? ;
+    // },[])
 
     const fetchDetailsProduct = async (context) => {
         const id = context?.queryKey && context?.queryKey[1];
@@ -84,6 +88,10 @@ const ProductDetailComponent = ({
             setErrorLimitOrder(true);
         }
     }, [quantityProduct]);
+
+    useEffect(() => {
+        initFacebookSDK();
+    }, []);
 
     const handleAddProduct = () => {
         if (!user?.id) {
@@ -180,6 +188,13 @@ const ProductDetailComponent = ({
                         >
                             Đổi địa chỉ
                         </span>
+                        <LikeButtonComponent
+                            dataHref={
+                                process.env.REACT_APP_IS_LOCAL
+                                    ? 'https://developers.facebook.com/docs/plugins/'
+                                    : window.location.href
+                            }
+                        />
                         <div className={cx('wrapper-info')}>
                             <div style={{ marginBottom: '12px', marginLeft: '10px' }}>số lượng</div>
                             <div className={cx('wrapper-quality')}>
@@ -192,7 +207,9 @@ const ProductDetailComponent = ({
                                 </button>
                             </div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 12px' }}>
+                        <ButtonWrapper
+                            style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 12px' }}
+                        >
                             <div>
                                 <ButtonComponent
                                     bordered={undefined}
@@ -226,9 +243,17 @@ const ProductDetailComponent = ({
                                 onClick={handleAddProduct}
                                 textButton={'Mua trả sau '}
                             />
-                        </div>
+                        </ButtonWrapper>
                     </div>
                 </Col>
+                <CommentFbComponent
+                    dataHref={
+                        process.env.REACT_APP_IS_LOCAL
+                            ? 'https://developers.facebook.com/docs/plugins/comments#configurator'
+                            : window.location.href
+                    }
+                    width="1240"
+                />
             </Row>
         </LoadingComponent>
     );

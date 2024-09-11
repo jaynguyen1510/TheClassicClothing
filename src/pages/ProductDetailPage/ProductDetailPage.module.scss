@@ -1,28 +1,57 @@
+/* Default styling for larger screens */
 .wrapper-product {
     padding: 0 120px;
     background: rgba(192, 192, 192, 0.3);
     height: 1000px;
+    width: 100%;
 }
+
 .wrapper-home {
     display: flex;
-    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
-    gap: 8px; /* Khoảng cách giữa các phần tử */
+    align-items: center;
+    gap: 8px;
 }
 
 .wrapper-text {
     cursor: pointer;
-    &:hover {
-        color: rgba(244, 186, 186, 1);
-    }
 }
+
+.wrapper-text:hover {
+    color: rgba(244, 186, 186, 1);
+}
+
 .separator {
     display: flex;
     align-self: start;
-    font-size: 16px; /* Kích thước chữ cho dấu phân cách */
-    color: #888; /* Màu sắc cho dấu phân cách */
+    font-size: 16px;
+    color: #888;
 }
 
-// .items-product {
-//     display: flex;
-//     background: rgba(244, 186, 186, 0.5);
-// }
+/* Responsive for tablets (screen width less than 1024px) */
+@media (max-width: 1024px) {
+    .wrapper-product {
+        padding: 0 60px;
+        height: auto; /* Make height dynamic */
+    }
+
+    .separator {
+        font-size: 14px;
+    }
+}
+
+/* Responsive for mobile (screen width less than 768px) */
+@media (max-width: 768px) {
+    .wrapper-product {
+        padding: 0 20px;
+        height: auto;
+    }
+
+    .wrapper-home {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: flex-start; /* Align to the start for smaller screens */
+    }
+
+    .separator {
+        font-size: 12px;
+    }
+}

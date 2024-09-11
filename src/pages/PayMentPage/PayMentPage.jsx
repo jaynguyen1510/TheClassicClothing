@@ -144,6 +144,7 @@ const PayMentPage = () => {
                 user: user?.id,
                 isPaid: true,
                 paidAt: details?.update_time,
+                email: user?.email,
             },
             {
                 onSuccess: () => {
@@ -291,6 +292,7 @@ const PayMentPage = () => {
             shippingPrice: deliveryPriceMemo,
             totalPrice: resultPriceMemo,
             user: user.id,
+            email: user?.email,
             isPaid: true,
         };
         localStorage.setItem('zaloPay', JSON.stringify(dataZaloPay));
@@ -439,7 +441,7 @@ const PayMentPage = () => {
                                 {payment === 'paypal' && sdkReady ? (
                                     <div style={{ width: '320px' }}>
                                         <PayPalButton
-                                            amount={resultPriceMemo}
+                                            amount={Math.round(resultPriceMemo)}
                                             // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
                                             onSuccess={onSuccessPayPal}
                                             onError={() => {

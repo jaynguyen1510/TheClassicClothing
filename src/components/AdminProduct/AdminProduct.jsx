@@ -495,6 +495,17 @@ const AdminProduct = () => {
             image: file.preview,
         });
     };
+    // const handleImageDetails = async ({ fileList }) => {
+    //     const file = fileList[0];
+    //     if (!file.url && !file.preview) {
+    //         file.preview = await getBase64(file.originFileObj);
+    //     }
+    //     setSateDetailsUsers({
+    //         ...sateDetailsUsers,
+    //         avatar: file.preview,
+    //     });
+    // };
+
     const handleDeletedManyProduct = (_id) => {
         mutationManyDeleted.mutate(
             { ids: _id, token: user?.access_token },
@@ -617,7 +628,13 @@ const AdminProduct = () => {
                         form={form}
                     >
                         {formItems.map(({ label, name, message }) => (
-                            <Form.Item key={name} label={label} name={name} rules={[{ required: true, message }]}>
+                            <Form.Item
+                                key={name}
+                                valuePropName="fileList"
+                                label={label}
+                                name={name}
+                                rules={[{ required: true, message }]}
+                            >
                                 <InputComponent
                                     value={sateDetailsProducts[name]}
                                     onChange={(e) => handleOnChangeDetailsProduct(e, name)}
@@ -627,6 +644,7 @@ const AdminProduct = () => {
                         <Form.Item
                             label="Hình ảnh"
                             name="image"
+                            valuePropName="fileList"
                             rules={[{ required: true, message: 'Vui lòng chọn ảnh sản phẩm' }]}
                         >
                             <WrapperUploadFile onChange={handleImageDetails} maxCount={'1'}>

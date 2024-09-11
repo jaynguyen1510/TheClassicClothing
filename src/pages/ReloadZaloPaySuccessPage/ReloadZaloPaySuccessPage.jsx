@@ -38,7 +38,7 @@ const ReloadZaloPaySuccessPage = () => {
             const response = await ZaloPayService.orderSuccess(app_trans_id);
             if (response.return_code === 1 && response.is_processing === false) {
                 return response;
-            } else {
+            } else if (response.return_code === 3 && response.is_processing === true) {
                 localStorage.removeItem('zaloPay');
                 message.error('Thanh toán cho đơn hàng thất bại');
                 navigate(routes[2].path);
@@ -57,6 +57,8 @@ const ReloadZaloPaySuccessPage = () => {
     const { isPending: isPendingZaloPay } = queryOrder;
 
     const createOrder = (sendOrder) => {
+        setIsOpenLoadingZalo(true);
+
         mutationZaloPaySuccess.mutate(
             {
                 token: user?.access_token,
@@ -72,6 +74,7 @@ const ReloadZaloPaySuccessPage = () => {
                 totalPrice: sendOrder.totalPrice,
                 user: sendOrder.user,
                 isPaid: sendOrder.isPaid,
+                email: sendOrder.email,
             },
             {
                 onSuccess: () => {
@@ -81,7 +84,6 @@ const ReloadZaloPaySuccessPage = () => {
                         }),
                     );
                     localStorage.removeItem('zaloPay');
-                    setIsOpenLoadingZalo(true);
                     message.success('Đặt hàng thành công');
                     navigate(routes[10].path, {
                         state: {
@@ -91,6 +93,9 @@ const ReloadZaloPaySuccessPage = () => {
                             resultPriceMemo: sendOrder.totalPrice,
                         },
                     });
+                },
+                onSettled: () => {
+                    setIsOpenLoadingZalo(false);
                 },
             },
         );
@@ -107,6 +112,7 @@ const ReloadZaloPaySuccessPage = () => {
                     sendOrder?.address &&
                     sendOrder?.phone &&
                     sendOrder?.city &&
+                    sendOrder?.email &&
                     sendOrder?.paymentMethod &&
                     sendOrder?.deliveryMethod &&
                     sendOrder?.itemsPrice != null &&
@@ -132,6 +138,7 @@ const ReloadZaloPaySuccessPage = () => {
             !rests.address ||
             !rests.phone ||
             !rests.city ||
+            !rests.email ||
             !rests.paymentMethod ||
             !rests.deliveryMethod ||
             rests.itemsPrice == null ||
@@ -150,7 +157,7 @@ const ReloadZaloPaySuccessPage = () => {
     return (
         <>
             <HeaderComponent isHiddenCart isHiddenSearch />
-            <LoadingComponent isPending={isPendingZaloPay && isOpenLoadingZalo && app_trans_id}>
+            <LoadingComponent isPending={isPendingZaloPay || (isOpenLoadingZalo && app_trans_id)}>
                 <div className={cx('loadingContainer')}>Vui lòng chờ để xác thực thông tin</div>
             </LoadingComponent>
         </>

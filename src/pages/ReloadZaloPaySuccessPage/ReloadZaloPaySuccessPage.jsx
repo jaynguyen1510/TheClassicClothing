@@ -75,6 +75,7 @@ const ReloadZaloPaySuccessPage = () => {
                 user: sendOrder.user,
                 isPaid: sendOrder.isPaid,
                 email: sendOrder.email,
+                app_trans_id: app_trans_id,
             },
             {
                 onSuccess: () => {

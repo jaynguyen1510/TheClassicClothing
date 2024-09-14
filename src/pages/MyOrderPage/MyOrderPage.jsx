@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
 import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
 
 import * as OrderService from '~/Services/OrderService';
+import * as ZaloPayService from '~/Services/ZaloPayService';
+
 import { useQuery } from '@tanstack/react-query';
 import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
 import { useSelector } from 'react-redux';
@@ -32,6 +34,7 @@ import { message } from 'antd';
 const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,57, 69)', colorButton = '#fff' }) => {
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const [description, setDescription] = useState('Cancel_With_ZaloPay');
 
     const fetchMyOrder = async () => {
         try {
@@ -39,6 +42,26 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
             return response;
         } catch (error) {
             throw new Error('Failed to fetch order details');
+        }
+    };
+    const fetchOrderSuccessZaloPay = async (app_trans_id) => {
+        if (!app_trans_id) throw new Error('Transaction ID is required');
+        try {
+            const response = await ZaloPayService.orderSuccess(app_trans_id);
+            return response;
+        } catch (error) {
+            throw new Error('Failed to fetch order details');
+        }
+    };
+
+    const fetchRefundOrderZaloPay = async (zp_trans_id, amount, description) => {
+        if (zp_trans_id && amount && description) {
+            try {
+                const response = await ZaloPayService.refundOrderZaloPayment(zp_trans_id, amount, description);
+                return response;
+            } catch (error) {
+                throw new Error('Failed to fetch order details');
+            }
         }
     };
 
@@ -64,15 +87,49 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
         return res;
     });
 
-    const handleRemoveProduct = (order) => {
-        mutation.mutate(
-            { id: order?._id, orderItems: order?.orderSelected },
-            {
-                onSuccess: () => {
-                    queryOrder.refetch();
+    const mutationCancelPayMent = useMutationCustomHook(async (data) => {
+        const { id, orderItems } = data;
+        const res = await OrderService.cancelOrderDetails(id, orderItems);
+        return res;
+    });
+
+    const handleRemoveProduct = async (order) => {
+        if (order.paymentMethod === 'later_money') {
+            mutation.mutate(
+                { id: order?._id, orderItems: order?.orderSelected },
+                {
+                    onSuccess: () => {
+                        queryOrder.refetch();
+                    },
                 },
-            },
-        );
+            );
+        } else if (order?.paymentMethod === 'zalopay' && order?.app_trans_id) {
+            try {
+                const response = await fetchOrderSuccessZaloPay(order?.app_trans_id);
+                // Handle success response if needed
+                if (response?.zp_trans_id && response?.amount && description) {
+                    try {
+                        const res = await fetchRefundOrderZaloPay(response?.zp_trans_id, response?.amount, description);
+                        console.log('res', res);
+                        if (res?.return_code === 3 && res?.sub_return_code === 2) {
+                            mutationCancelPayMent.mutate(
+                                { id: order?._id, orderItems: order?.orderSelected },
+                                {
+                                    onSuccess: () => {
+                                        queryOrder.refetch();
+                                    },
+                                },
+                            );
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch');
+                    }
+                }
+            } catch (error) {
+                message.error('Failed to fetch order details');
+                console.error('Error fetching ZaloPay order success:', error.message);
+            }
+        }
     };
 
     const {
@@ -82,6 +139,13 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
         data: dataCancelOrder,
     } = mutation;
 
+    const {
+        isPending: isPendingCancelZaloPay,
+        isSuccess: isSuccessZaloPay,
+        isError: isErrorZaloPay,
+        data: dataCancelZaloPay,
+    } = mutationCancelPayMent;
+
     useEffect(() => {
         if (isSuccessCancel && dataCancelOrder?.status === 'OK') {
             message.success('Hủy đơn hàng thành công');
@@ -89,11 +153,18 @@ const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,5
             message.error('Hủy đơn hàng thất bại');
         }
     }, [isSuccessCancel, isErrorCancel]);
+    useEffect(() => {
+        if (isSuccessZaloPay && dataCancelZaloPay?.status === 'OK') {
+            message.success('Hủy đơn hàng thành công');
+        } else if (isErrorZaloPay && dataCancelZaloPay?.status === 'ERR') {
+            message.error('Hủy đơn hàng thất bại');
+        }
+    }, [isSuccessZaloPay, isErrorZaloPay]);
 
     return (
         <>
             <HeaderComponent isHiddenSearch isHiddenCart />
-            <LoadingComponent isPending={isPendingOrder || isPendingCancelOrder}>
+            <LoadingComponent isPending={isPendingOrder || isPendingCancelOrder || isPendingCancelZaloPay}>
                 <Container>
                     <Header>
                         <Title>Chi tiết hóa đơn</Title>

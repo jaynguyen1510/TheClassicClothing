@@ -23,3 +23,12 @@ export const orderSuccess = async (app_trans_id) => {
     }
 };
 
+export const refundOrderZaloPayment = async (zp_trans_id, amount, description) => {
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_API_ZALO_BACKEND}/zalopay/refund/${zp_trans_id}/${amount}/${description}`);
+        return res.data;
+    } catch (error) {
+        console.error('Lỗi khi tạo hoàn tiền:', error);
+        throw new Error('Lỗi khi tạo hoàn tiền');
+    }
+}

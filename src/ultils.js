@@ -1,3 +1,5 @@
+import { orderConstant } from "./constant";
+
 export const isJsonString = (str) => {
     try {
         JSON.parse(str);
@@ -40,6 +42,19 @@ export const convertPrice = (price) => {
     }
 }
 
+export const convertIsPaid = (isPaid) => {
+    try {
+        if (isPaid === true) {
+            return 'Đã thanh toán'
+        } else if (isPaid === false) {
+            return 'Chưa thanh toán'
+
+        }
+    } catch (error) {
+        return null
+    }
+}
+
 export const initFacebookSDK = () => {
     if (window.FB) {
         window.FB.XFBML.parse();
@@ -66,25 +81,27 @@ export const initFacebookSDK = () => {
     })(document, "script", "facebook-jssdk");
 };
 
-// export const convertDataChart = (data, type) => {
-//     try {
-//         const object = {}
-//         Array.isArray(data) && data.forEach((opt) => {
-//             if (!object[opt[type]]) {
-//                 object[opt[type]] = 1
-//             } else {
-//                 object[opt[type]] += 1
-//                 console.log('c;getBase64', object[opt[type]], typeof (object[opt[type]]))
-//             }
-//         })
-//         const results = Array.isArray(Object.keys(object)) && Object.keys(object).map((item) => {
-//             return {
-//                 name: orderContant.payment[item],
-//                 value: object[item]
-//             }
-//         })
-//         return results
-//     } catch (e) {
-//         return []
-//     }
-// }
+export const convertDataChart = (dataOrder, type) => {
+    try {
+        const object = {};
+        Array.isArray(dataOrder) && dataOrder.forEach((opt) => {
+            if (!object[opt[type]]) {
+                object[opt[type]] = 1;
+            } else {
+                object[opt[type]] += 1;
+            }
+        });
+        console.log("object", object);
+
+        const results = Object.keys(object).map((item) => {
+            return {
+                name: orderConstant.payment[item] || item,
+                value: object[item]
+            }
+        })
+        return results
+    } catch (error) {
+        return []
+    }
+};
+

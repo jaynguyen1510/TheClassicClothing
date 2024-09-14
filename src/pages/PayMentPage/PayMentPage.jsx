@@ -44,6 +44,7 @@ const PayMentPage = () => {
         phone: '',
         city: '',
     });
+
     const [form] = Form.useForm();
 
     const dispatch = useDispatch();

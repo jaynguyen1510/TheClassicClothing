@@ -24,6 +24,8 @@ body {
     text-rendering: optimizeSpeed;
     color: var(--text-color);
     overflow-y: overlay;
+    overflow-x: overlay;
+    /* Thêm dòng này để tạo thanh cuộn ngang khi nội dung tràn ra ngoài */
 }
 
 html {

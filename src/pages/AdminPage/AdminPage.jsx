@@ -7,8 +7,9 @@ import AdminUser from '~/components/AdminUser/AdminUser';
 import AdminProduct from '~/components/AdminProduct/AdminProduct';
 
 import { Menu } from 'antd';
-import { ProductFilled, UserOutlined } from '@ant-design/icons';
+import { ProductFilled, UserOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { StyledLabel } from './style';
+import OrderAdmin from '~/components/OrderAdminComponent/OrderAdminComponent';
 
 const cx = classNames.bind(styles);
 const items = [
@@ -35,6 +36,17 @@ const items = [
         ),
     },
     {
+        key: 'order',
+        label: <StyledLabel>Quản lý đơn hàng</StyledLabel>,
+        icon: (
+            <ShoppingCartOutlined
+                style={{
+                    color: 'rgba(255, 182, 193, 1)',
+                }}
+            />
+        ),
+    },
+    {
         type: 'divider',
     },
 ];
@@ -48,6 +60,8 @@ const AdminPage = () => {
                 return <AdminUser />;
             case 'product':
                 return <AdminProduct />;
+            case 'order':
+                return <OrderAdmin />;
             default:
                 return <div>Welcome Admin go with The Classic</div>;
         }

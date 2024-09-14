@@ -56,3 +56,17 @@ export const cancelOrderDetails = async (id, orderItems, access_token) => {
         console.error('Error cancelOrderDetails:', error);
     }
 }
+// get - all - order
+
+export const getAllOrder = async (access_token) => {
+    try {
+        const res = await axiosJwt.get(`${process.env.REACT_APP_API_URL_BACKEND}/order/get-all-order`, {
+            headers: {
+                token: `Bearer ${access_token}`,
+            },
+        })
+        return res.data;
+    } catch (error) {
+        console.error('Error cancelOrderDetails:', error);
+    }
+}

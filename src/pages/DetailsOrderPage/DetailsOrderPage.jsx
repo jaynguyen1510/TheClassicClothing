@@ -1,10 +1,10 @@
 import React from 'react';
 
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 
 import * as OrderService from '~/Services/OrderService';
 
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import {
     WrapperAllPrice,
     WrapperContentInfo,
@@ -16,7 +16,7 @@ import {
     WrapperStyleContent,
     WrapperLabel,
 } from './style';
-import { convertPrice } from '~/ultils';
+import { convertPrice } from '../../ultils';
 import { orderConstant } from '~/constant';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, useParams } from 'react-router-dom';

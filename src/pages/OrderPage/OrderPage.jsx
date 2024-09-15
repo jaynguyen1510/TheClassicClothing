@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
-import ModalComponent from '~/components/ModalComponent/ModalComponent';
-import InputComponent from '~/components/InputComponent/InputComponent';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
+import ModalComponent from '../../components/ModalComponent/ModalComponent';
+import InputComponent from '../../components/InputComponent/InputComponent';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 
 import * as UserService from '~/Services/UserService';
-import * as message from '~/components/Message/Message';
+import * as message from '../../components/Message/Message';
 
-import StepsOption from '~/components/StepsOption/StepsOption';
+import StepsOption from '../../components/StepsOption/StepsOption';
 
 import { DeleteOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Checkbox, Form } from 'antd';
@@ -22,7 +22,7 @@ import {
     WrapperStyleHeader,
     WrapperTotal,
 } from './style';
-import { WrapperInputNumber } from '~/components/ProductDetailComponent/style';
+import { WrapperInputNumber } from '../../components/ProductDetailComponent/style';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     decreaseAmount,
@@ -31,9 +31,9 @@ import {
     removeOrderProduct,
     selectedOrderItem,
 } from '~/redux/slides/orderSlide';
-import { convertPrice } from '~/ultils';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { convertPrice } from '../../ultils';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';

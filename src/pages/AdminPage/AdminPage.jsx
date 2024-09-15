@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './AdminPage.module.scss';
 
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
-import AdminUser from '~/components/AdminUser/AdminUser';
-import AdminProduct from '~/components/AdminProduct/AdminProduct';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
+import AdminUser from '../../components/AdminUser/AdminUser';
+import AdminProduct from '../../components/AdminProduct/AdminProduct';
 
 import { Menu } from 'antd';
 import { ProductFilled, UserOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { StyledLabel } from './style';
-import OrderAdmin from '~/components/OrderAdminComponent/OrderAdminComponent';
+import OrderAdmin from '../../components/OrderAdminComponent/OrderAdminComponent';
 
 const cx = classNames.bind(styles);
 const items = [

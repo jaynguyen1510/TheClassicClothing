@@ -3,8 +3,8 @@ import classNames from 'classnames/bind';
 import styles from './SignInPages.module.scss';
 import * as UserService from '~/Services/UserService';
 
-import InputForm from '~/components/InputForm/InputForm';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import InputForm from '../../components/InputForm/InputForm';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import Logo from '~/assets/images/TheClassic.png';
 
 import { jwtDecode } from 'jwt-decode';
@@ -12,8 +12,8 @@ import { routes } from '~/routes/index';
 import { Image } from 'antd';
 import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '~/redux/slides/userSlide';
 

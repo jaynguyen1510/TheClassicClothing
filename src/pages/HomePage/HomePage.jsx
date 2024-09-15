@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import SliderComponents from '../../components/SliderComponents/SliderComponents';
 import TypeProduct from '../../components/TypeProduct/TypeProduct';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
-import CardComponent from '~/components/CardComponent/CardComponent';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
+import CardComponent from '../../components/CardComponent/CardComponent';
 
 import * as ProductService from '~/Services/ProductService';
 
@@ -14,8 +14,8 @@ import { WrapperTypeProduct } from './style';
 import { allImages } from '../../assets/images/';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
-import { useDebounceCustomHook } from '~/hook/useDebounceCustomHook';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
+import { useDebounceCustomHook } from '../../hook/useDebounceCustomHook';
 
 const cx = classNames.bind(styles);
 

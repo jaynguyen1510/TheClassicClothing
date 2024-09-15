@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ProductDetailComponent from '~/components/ProductDetailComponent/ProductDetailComponent';
+import ProductDetailComponent from '../../components/ProductDetailComponent/ProductDetailComponent';
 
 const ProductsPage = () => {
     const { id } = useParams();

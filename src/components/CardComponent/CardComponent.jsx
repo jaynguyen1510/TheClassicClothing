@@ -6,7 +6,7 @@ import imgOffice from '~/assets/images/office.png';
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceText, WrapperReportText } from './style';
 import { StarFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { convertPrice } from '~/ultils';
+import { convertPrice } from '../../ultils';
 
 const cx = classNames.bind(styles);
 

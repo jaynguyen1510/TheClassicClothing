@@ -1,5 +1,5 @@
 import React from 'react';
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import {
     Label,
     WrapperInfo,
@@ -14,8 +14,8 @@ import {
     DeliveryInfoWrapper,
     TotalPriceWrapper,
 } from './style';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
-import { convertPrice } from '~/ultils';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
+import { convertPrice } from '../../ultils';
 import { useLocation } from 'react-router-dom';
 import { orderConstant } from '~/constant';
 

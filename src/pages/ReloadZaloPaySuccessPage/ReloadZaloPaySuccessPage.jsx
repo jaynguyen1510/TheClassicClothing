@@ -4,17 +4,17 @@ import styles from './ReloadZaloPaySuccessPage.module.scss';
 import classNames from 'classnames/bind';
 
 import * as ZaloPayService from '~/Services/ZaloPayService';
-import * as message from '~/components/Message/Message';
+import * as message from '../../components/Message/Message';
 import * as OrderService from '~/Services/OrderService';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
 import { routes } from '~/routes';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { useQuery } from '@tanstack/react-query';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 
 const cx = classNames.bind(styles);
 const ReloadZaloPaySuccessPage = () => {

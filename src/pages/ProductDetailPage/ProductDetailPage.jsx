@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './ProductDetailPage.module.scss';
-import ProductDetailComponent from '~/components/ProductDetailComponent/ProductDetailComponent';
+import ProductDetailComponent from '../../components/ProductDetailComponent/ProductDetailComponent';
 import { useNavigate, useParams } from 'react-router-dom';
 import { routes } from '~/routes';
 

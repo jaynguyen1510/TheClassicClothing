@@ -3,17 +3,17 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './SignUpPages.module.scss';
 
-import InputForm from '~/components/InputForm/InputForm';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import InputForm from '../../components/InputForm/InputForm';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import Logo from '~/assets/images/TheClassic.png';
 import * as UserService from '~/Services/UserService';
-import * as Message from '~/components/Message/Message';
+import * as Message from '../../components/Message/Message';
 
 import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { Image } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 
 const cx = classNames.bind(styles);
 

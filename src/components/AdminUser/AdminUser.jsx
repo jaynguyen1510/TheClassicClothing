@@ -8,17 +8,17 @@ import ModalComponent from '../ModalComponent/ModalComponent';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 
-import * as UserService from '~/Services/UserService';
-import * as message from '~/components/Message/Message';
+import * as UserService from '../../Services/UserService';
+import * as message from '../../components/Message/Message';
 
 import { Button, Form, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { WrapperUploadFile } from './style';
-import { getBase64 } from '~/ultils';
+import { getBase64 } from '../../ultils';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 
 const cx = classNames.bind(styles);
 const AdminUser = () => {

@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './TypeProducts.module.scss';
 
-import CardComponent from '~/components/CardComponent/CardComponent';
-import NavBarComponent from '~/components/NavBarComponent/NavBarComponent';
+import CardComponent from '../../components/CardComponent/CardComponent';
+import NavBarComponent from '../../components/NavBarComponent/NavBarComponent';
 import * as ProductService from '~/Services/ProductService';
 
 import { Col, Pagination, Row } from 'antd';
 import { useLocation } from 'react-router-dom';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { useSelector } from 'react-redux';
-import { useDebounceCustomHook } from '~/hook/useDebounceCustomHook';
+import { useDebounceCustomHook } from '../../hook/useDebounceCustomHook';
 
 const cx = classNames.bind(styles);
 const TypeProductsPage = () => {

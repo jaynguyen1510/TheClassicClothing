@@ -10,7 +10,7 @@ import * as OrderService from '~/Services/OrderService';
 
 import { Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { convertIsPaid, convertPrice } from '~/ultils';
+import { convertIsPaid, convertPrice } from '../../ultils';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { orderConstant } from '~/constant';

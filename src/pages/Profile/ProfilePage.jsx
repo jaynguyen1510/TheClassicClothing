@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ProfilePage.module.scss';
-import InputForm from '~/components/InputForm/InputForm';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import InputForm from '../../components/InputForm/InputForm';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import * as UserService from '~/Services/UserService';
-import * as message from '~/components/Message/Message';
+import * as message from '../../components/Message/Message';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
 import { Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { getBase64 } from '~/ultils';
+import { getBase64 } from '../../ultils';
 import { WrapperUploadFile } from './style';
 
 const cx = classNames.bind(styles);

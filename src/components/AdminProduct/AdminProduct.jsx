@@ -9,13 +9,13 @@ import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import ModalComponent from '../ModalComponent/ModalComponent';
 
 import * as ProductService from '~/Services/ProductService';
-import * as message from '~/components/Message/Message';
+import * as message from '../../components/Message/Message';
 
 import { Button, Form, Select, Space } from 'antd';
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { getBase64, renderOptions } from '~/ultils';
+import { getBase64, renderOptions } from '../../ultils';
 import { WrapperUploadFile } from './style';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';

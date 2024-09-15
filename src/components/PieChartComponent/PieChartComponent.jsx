@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { convertDataChart } from '~/ultils';
+import { convertDataChart } from '../../ultils';
 
 const PieChartComponent = ({ data: dataOrder }) => {
     const data = convertDataChart(dataOrder, 'paymentMethod');

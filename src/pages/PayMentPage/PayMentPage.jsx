@@ -1,23 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
-import ModalComponent from '~/components/ModalComponent/ModalComponent';
-import InputComponent from '~/components/InputComponent/InputComponent';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
+import ModalComponent from '../../components/ModalComponent/ModalComponent';
+import InputComponent from '../../components/InputComponent/InputComponent';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import ZaloPayIcon from '~/assets/images/zaloPay.png';
 
 import * as UserService from '~/Services/UserService';
 import * as OrderService from '~/Services/OrderService';
 import * as PaymentService from '~/Services/PaymentService';
 import * as ZaloPayService from '~/Services/ZaloPayService';
-import * as message from '~/components/Message/Message';
+import * as message from '../../components/Message/Message';
 
 import { Form, Radio } from 'antd';
 import { Label, WrapperInfo, WrapperLeft, WrapperRadio, WrapperRight, WrapperTotal } from './style';
 import { useDispatch, useSelector } from 'react-redux';
-import { convertPrice } from '~/ultils';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { convertPrice } from '../../ultils';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { updateUser } from '~/redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';

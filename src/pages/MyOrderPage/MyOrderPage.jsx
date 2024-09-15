@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import HeaderComponent from '~/components/HeaderComponent/HeaderComponent';
-import ButtonComponent from '~/components/ButtonComponent/ButtonComponent';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 
 import * as OrderService from '~/Services/OrderService';
 import * as ZaloPayService from '~/Services/ZaloPayService';
 
 import { useQuery } from '@tanstack/react-query';
-import { LoadingComponent } from '~/components/LoadingComponent/LoadingComponent';
+import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { useSelector } from 'react-redux';
 import {
     Container,
@@ -24,11 +24,11 @@ import {
     ItemDetails,
     PaymentDetails,
 } from './style'; // Import styled components
-import { convertPrice } from '~/ultils';
+import { convertPrice } from '../../ultils';
 import { orderConstant } from '~/constant';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
-import { useMutationCustomHook } from '~/hook/useMutationCustomHook';
+import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { message } from 'antd';
 
 const MyOrderPage = ({ idProduct, size = 40, backgroundColorButton = 'rgba(255,57, 69)', colorButton = '#fff' }) => {

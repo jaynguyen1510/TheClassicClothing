@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { addOrderProduct, resetOrder } from '~/redux/slides/orderSlide';
-import { convertPrice, initFacebookSDK } from '~/ultils';
+import { convertPrice, initFacebookSDK } from '../../ultils';
 
 const cx = classNames.bind(styles);
 

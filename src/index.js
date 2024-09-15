@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import GlobalStyle from "~/components/GlobalStyle";
+import GlobalStyle from "../src/components/GlobalStyle";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

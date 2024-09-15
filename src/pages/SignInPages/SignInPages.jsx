@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './SignInPages.module.scss';
-import * as UserService from '~/Services/UserService';
+import * as UserService from '../../Services//UserService';
 
 import InputForm from '../../components/InputForm/InputForm';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';

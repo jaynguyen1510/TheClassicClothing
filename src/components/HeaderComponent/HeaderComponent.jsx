@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './HeaderComponent.module.scss';
 
-import * as UserService from '~/Services/UserService';
+import * as UserService from '../../Services/UserService';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 
 import { Badge, Col, Popover } from 'antd';

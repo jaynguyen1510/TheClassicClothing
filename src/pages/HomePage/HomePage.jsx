@@ -5,7 +5,7 @@ import TypeProduct from '../../components/TypeProduct/TypeProduct';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import CardComponent from '../../components/CardComponent/CardComponent';
 
-import * as ProductService from '~/Services/ProductService';
+import * as ProductService from '../../Services//ProductService';
 
 import classNames from 'classnames/bind';
 import styles from './HomePage.module.scss';

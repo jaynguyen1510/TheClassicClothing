@@ -5,7 +5,7 @@ import ModalComponent from '../../components/ModalComponent/ModalComponent';
 import InputComponent from '../../components/InputComponent/InputComponent';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 
-import * as UserService from '~/Services/UserService';
+import * as UserService from '../../Services//UserService';
 import * as message from '../../components/Message/Message';
 
 import StepsOption from '../../components/StepsOption/StepsOption';

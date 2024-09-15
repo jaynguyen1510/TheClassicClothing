@@ -2,7 +2,7 @@ import React from 'react';
 
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 
-import * as OrderService from '~/Services/OrderService';
+import * as OrderService from '../../Services//OrderService';
 
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import {

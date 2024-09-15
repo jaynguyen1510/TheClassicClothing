@@ -6,10 +6,10 @@ import InputComponent from '../../components/InputComponent/InputComponent';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import ZaloPayIcon from '~/assets/images/zaloPay.png';
 
-import * as UserService from '~/Services/UserService';
-import * as OrderService from '~/Services/OrderService';
-import * as PaymentService from '~/Services/PaymentService';
-import * as ZaloPayService from '~/Services/ZaloPayService';
+import * as UserService from '../../Services//UserService';
+import * as OrderService from '../../Services//OrderService';
+import * as PaymentService from '../../Services//PaymentService';
+import * as ZaloPayService from '../../Services//ZaloPayService';
 import * as message from '../../components/Message/Message';
 
 import { Form, Radio } from 'antd';

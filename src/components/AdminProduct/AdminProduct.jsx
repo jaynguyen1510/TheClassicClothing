@@ -8,7 +8,7 @@ import InputComponent from '../InputComponent/InputComponent';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import ModalComponent from '../ModalComponent/ModalComponent';
 
-import * as ProductService from '~/Services/ProductService';
+import * as ProductService from '../../Services/ProductService';
 import * as message from '../../components/Message/Message';
 
 import { Button, Form, Select, Space } from 'antd';

@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './ProfilePage.module.scss';
 import InputForm from '../../components/InputForm/InputForm';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import * as UserService from '~/Services/UserService';
+import * as UserService from '../../Services//UserService';
 import * as message from '../../components/Message/Message';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationCustomHook } from '../../hook/useMutationCustomHook';

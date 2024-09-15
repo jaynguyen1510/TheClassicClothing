@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import styles from './ReloadZaloPaySuccessPage.module.scss';
 import classNames from 'classnames/bind';
 
-import * as ZaloPayService from '~/Services/ZaloPayService';
+import * as ZaloPayService from '../../Services//ZaloPayService';
 import * as message from '../../components/Message/Message';
-import * as OrderService from '~/Services/OrderService';
+import * as OrderService from '../../Services//OrderService';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';

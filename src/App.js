@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
-import * as UserService from '~/Services/UserService';
+import * as UserService from '../src/Services/UserService';
 
 import { useDispatch, useSelector } from "react-redux";
 import { routes } from "./routes";

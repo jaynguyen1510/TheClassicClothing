@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 
-import * as OrderService from '~/Services/OrderService';
-import * as ZaloPayService from '~/Services/ZaloPayService';
+import * as OrderService from '../../Services//OrderService';
+import * as ZaloPayService from '../../Services//ZaloPayService';
 
 import { useQuery } from '@tanstack/react-query';
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';

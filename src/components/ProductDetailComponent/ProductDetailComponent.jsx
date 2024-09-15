@@ -7,7 +7,7 @@ import imageSmall from '~/assets/images/ao-day.png';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import LikeButtonComponent from '../LikeButtonComponent/LikeButtonComponent';
 import CommentFbComponent from '../CommentFbComponent/CommentFbComponent';
-import * as ProductService from '~/Services/ProductService';
+import * as ProductService from '../../Services//ProductService';
 
 import { ButtonWrapper, WrapperInputNumber } from './style';
 import { Col, Image, message, Rate, Row } from 'antd';

@@ -6,7 +6,7 @@ import styles from './OrderAdminComponent.module.scss';
 import TableComponent from '../TableComponent/TableComponent';
 import InputComponent from '../InputComponent/InputComponent';
 
-import * as OrderService from '~/Services/OrderService';
+import * as OrderService from '../../Services//OrderService';
 
 import { Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';

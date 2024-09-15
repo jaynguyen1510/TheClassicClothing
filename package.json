@@ -60,5 +60,5 @@
             "last 1 safari version"
         ]
     },
-    "proxy": "https://back-end-classic-ib8i.onrender.com"
+    "proxy": "https://back-end-classic-ib8i.onrender.com/api"
 }

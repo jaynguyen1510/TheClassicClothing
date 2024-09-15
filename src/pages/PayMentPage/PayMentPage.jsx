@@ -22,7 +22,7 @@ import { updateUser } from '~/redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '~/routes';
 import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
-import { PayPalButton } from 'react-paypal-button-v2';
+// import { PayPalButton } from 'react-paypal-button-v2';
 
 const PayMentPage = () => {
     const formItems = [
@@ -128,45 +128,45 @@ const PayMentPage = () => {
             message.error('Đặt hàng thất bại');
         }
     };
-    const onSuccessPayPal = (details, data) => {
-        mutationAddOrder.mutate(
-            {
-                token: user?.access_token,
-                orderSelected: order?.selectItemsOrder,
-                fullName: user?.name,
-                address: user?.address,
-                phone: user?.phone,
-                city: user?.city,
-                paymentMethod: payment,
-                deliveryMethod: delivery, // Add delivery method here
-                itemsPrice: priceMemo,
-                shippingPrice: deliveryPriceMemo,
-                totalPrice: resultPriceMemo,
-                user: user?.id,
-                isPaid: true,
-                paidAt: details?.update_time,
-                email: user?.email,
-            },
-            {
-                onSuccess: () => {
-                    dispatch(
-                        removeAllOrderProduct({
-                            listCheckbox: order?.selectItemsOrder.map((item) => item?.product),
-                        }),
-                    );
-                    message.success('Đặt hàng thành công');
-                    navigate(routes[10].path, {
-                        state: {
-                            delivery,
-                            payment,
-                            order: order?.selectItemsOrder,
-                            resultPriceMemo: resultPriceMemo,
-                        },
-                    });
-                },
-            },
-        );
-    };
+    // const onSuccessPayPal = (details, data) => {
+    //     mutationAddOrder.mutate(
+    //         {
+    //             token: user?.access_token,
+    //             orderSelected: order?.selectItemsOrder,
+    //             fullName: user?.name,
+    //             address: user?.address,
+    //             phone: user?.phone,
+    //             city: user?.city,
+    //             paymentMethod: payment,
+    //             deliveryMethod: delivery, // Add delivery method here
+    //             itemsPrice: priceMemo,
+    //             shippingPrice: deliveryPriceMemo,
+    //             totalPrice: resultPriceMemo,
+    //             user: user?.id,
+    //             isPaid: true,
+    //             paidAt: details?.update_time,
+    //             email: user?.email,
+    //         },
+    //         {
+    //             onSuccess: () => {
+    //                 dispatch(
+    //                     removeAllOrderProduct({
+    //                         listCheckbox: order?.selectItemsOrder.map((item) => item?.product),
+    //                     }),
+    //                 );
+    //                 message.success('Đặt hàng thành công');
+    //                 navigate(routes[10].path, {
+    //                     state: {
+    //                         delivery,
+    //                         payment,
+    //                         order: order?.selectItemsOrder,
+    //                         resultPriceMemo: resultPriceMemo,
+    //                     },
+    //                 });
+    //             },
+    //         },
+    //     );
+    // };
 
     const mutationUpdate = useMutationCustomHook(async (data) => {
         const { id, token, ...rests } = data;
@@ -358,9 +358,6 @@ const PayMentPage = () => {
                                             <Radio value="later_money" style={{ color: '#ea8500', fontWeight: 'bold' }}>
                                                 Thanh toán tiền mặt khi nhận hàng
                                             </Radio>
-                                            <Radio value="paypal" style={{ color: '#ea8500', fontWeight: 'bold' }}>
-                                                Thanh toán bằng PayPal
-                                            </Radio>
                                             <Radio value="zalopay" style={{ color: '#ea8500', fontWeight: 'bold' }}>
                                                 Thanh toán bằng zaloPay
                                             </Radio>
@@ -439,18 +436,7 @@ const PayMentPage = () => {
                                         </span>
                                     </WrapperTotal>
                                 </div>
-                                {payment === 'paypal' && sdkReady ? (
-                                    <div style={{ width: '320px' }}>
-                                        <PayPalButton
-                                            amount={Math.round(resultPriceMemo)}
-                                            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-                                            onSuccess={onSuccessPayPal}
-                                            onError={() => {
-                                                alert('Error saving transaction');
-                                            }}
-                                        />
-                                    </div>
-                                ) : payment === 'zalopay' && sdkReady ? (
+                                {payment === 'zalopay' && sdkReady ? (
                                     <img
                                         src={ZaloPayIcon}
                                         alt="ZaloPay"

@@ -5,7 +5,7 @@ import styles from './SignUpPages.module.scss';
 
 import InputForm from '../../components/InputForm/InputForm';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import Logo from '~/assets/images/TheClassic.png';
+import Logo from '../../assets/images/TheClassic.png';
 import * as UserService from '../../Services//UserService';
 import * as Message from '../../components/Message/Message';
 

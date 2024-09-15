@@ -8,7 +8,7 @@ import * as message from '../../components/Message/Message';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
-import { updateUser } from '~/redux/slides/userSlide';
+import { updateUser } from '../../redux/slides/userSlide';
 import { Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { getBase64 } from '../../ultils';

@@ -11,10 +11,11 @@ import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderSmall, WrapperTextHea
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetUser } from '~/redux/slides/userSlide';
+import { resetUser } from '../../redux/slides/userSlide';
+// import { resetUser } from '../../redux/slides/userSlide';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
-import { searchProduct } from '~/redux/slides/productSlide';
-import { routes } from '~/routes';
+import { searchProduct } from '../../redux/slides/productSlide';
+import { routes } from '../../routes';
 
 const cx = classNames.bind(styles);
 

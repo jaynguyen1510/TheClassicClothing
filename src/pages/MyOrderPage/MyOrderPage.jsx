@@ -25,9 +25,9 @@ import {
     PaymentDetails,
 } from './style'; // Import styled components
 import { convertPrice } from '../../ultils';
-import { orderConstant } from '~/constant';
+import { orderConstant } from '../../constant';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '~/routes';
+import { routes } from '../../routes';
 import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { message } from 'antd';
 

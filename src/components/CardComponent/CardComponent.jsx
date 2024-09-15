@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './CardComponent.module.scss';
 import classNames from 'classnames/bind';
-import imgOffice from '~/assets/images/office.png';
+// import imgOffice from '../../assets/images/office.png';
+import imgOffice from '../../assets/images/office.png';
 
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceText, WrapperReportText } from './style';
 import { StarFilled } from '@ant-design/icons';

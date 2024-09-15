@@ -1,7 +1,7 @@
 // src/redux/store.js
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import productReducer from "~/redux/slides/productSlide";
-import userReducer from "~/redux/slides/userSlide";
+import productReducer from "../redux/slides/productSlide";
+import userReducer from "../redux/slides/userSlide";
 import orderSlide from "./slides/orderSlide";
 import storage from 'redux-persist/lib/storage'
 import {

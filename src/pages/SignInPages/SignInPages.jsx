@@ -5,17 +5,17 @@ import * as UserService from '../../Services//UserService';
 
 import InputForm from '../../components/InputForm/InputForm';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import Logo from '~/assets/images/TheClassic.png';
+import Logo from '../../assets/images/TheClassic.png';
 
 import { jwtDecode } from 'jwt-decode';
-import { routes } from '~/routes/index';
+import { routes } from '../../routes/index';
 import { Image } from 'antd';
 import { EyeInvisibleFilled, EyeFilled } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUser } from '~/redux/slides/userSlide';
+import { updateUser } from '../../redux/slides/userSlide';
 
 const cx = classNames.bind(styles);
 const SignInPages = ({ size = 40, backgroundColorButton = 'rgba(255,57, 69)', colorButton = '#fff' }) => {

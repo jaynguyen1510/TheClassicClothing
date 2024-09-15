@@ -17,7 +17,7 @@ import {
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
 import { convertPrice } from '../../ultils';
 import { useLocation } from 'react-router-dom';
-import { orderConstant } from '~/constant';
+import { orderConstant } from '../../constant';
 
 const OrderSuccess = () => {
     const location = useLocation();

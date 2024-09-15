@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ProductDetailComponent.module.scss';
 
-import imageSmall from '~/assets/images/ao-day.png';
+import imageSmall from '../../assets/images/ao-day.png';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import LikeButtonComponent from '../LikeButtonComponent/LikeButtonComponent';
 import CommentFbComponent from '../CommentFbComponent/CommentFbComponent';
@@ -16,8 +16,8 @@ import { useQuery } from '@tanstack/react-query';
 import { LoadingComponent } from '../LoadingComponent/LoadingComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { routes } from '~/routes';
-import { addOrderProduct, resetOrder } from '~/redux/slides/orderSlide';
+import { routes } from '../../routes';
+import { addOrderProduct, resetOrder } from '../../redux/slides/orderSlide';
 import { convertPrice, initFacebookSDK } from '../../ultils';
 
 const cx = classNames.bind(styles);

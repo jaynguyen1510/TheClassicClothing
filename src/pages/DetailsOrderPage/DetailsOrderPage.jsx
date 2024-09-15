@@ -17,7 +17,7 @@ import {
     WrapperLabel,
 } from './style';
 import { convertPrice } from '../../ultils';
-import { orderConstant } from '~/constant';
+import { orderConstant } from '../../constant';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, useParams } from 'react-router-dom';
 

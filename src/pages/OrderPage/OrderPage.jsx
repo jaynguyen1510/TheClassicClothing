@@ -30,13 +30,13 @@ import {
     removeAllOrderProduct,
     removeOrderProduct,
     selectedOrderItem,
-} from '~/redux/slides/orderSlide';
+} from '../../redux/slides/orderSlide';
 import { convertPrice } from '../../ultils';
 import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
-import { updateUser } from '~/redux/slides/userSlide';
+import { updateUser } from '../../redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '~/routes';
+import { routes } from '../../routes';
 
 const OrderPage = () => {
     const formItems = [

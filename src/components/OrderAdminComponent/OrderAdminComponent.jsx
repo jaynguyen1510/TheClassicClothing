@@ -13,7 +13,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { convertIsPaid, convertPrice } from '../../ultils';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-import { orderConstant } from '~/constant';
+import { orderConstant } from '../../constant';
 import PieChartComponent from '../PieChartComponent/PieChartComponent';
 
 const cx = classNames.bind(styles);

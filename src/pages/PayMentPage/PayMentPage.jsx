@@ -4,7 +4,7 @@ import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import ModalComponent from '../../components/ModalComponent/ModalComponent';
 import InputComponent from '../../components/InputComponent/InputComponent';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import ZaloPayIcon from '~/assets/images/zaloPay.png';
+import ZaloPayIcon from '../../assets/images/zaloPay.png';
 
 import * as UserService from '../../Services//UserService';
 import * as OrderService from '../../Services//OrderService';
@@ -18,10 +18,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { convertPrice } from '../../ultils';
 import { useMutationCustomHook } from '../../hook/useMutationCustomHook';
 import { LoadingComponent } from '../../components/LoadingComponent/LoadingComponent';
-import { updateUser } from '~/redux/slides/userSlide';
+import { updateUser } from '../../redux/slides/userSlide';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '~/routes';
-import { removeAllOrderProduct } from '~/redux/slides/orderSlide';
+import { routes } from '../../routes';
+import { removeAllOrderProduct } from '../../redux/slides/orderSlide';
 // import { PayPalButton } from 'react-paypal-button-v2';
 
 const PayMentPage = () => {

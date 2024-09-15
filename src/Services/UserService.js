@@ -24,14 +24,25 @@ export const getDetailsUser = async (id, access_token) => {
 
 
 
-export const refreshToken = async () => {
+export const refreshToken = async (refreshToken) => {
 
-    const res = await axios.post(`${process.env.REACT_APP_API_URL_BACKEND}/user/refresh-token`, {
-        withCredentials: true
-    })
-    return res.data
+    console.log(refreshToken);
+
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL_BACKEND}/user/refresh-token`, {}, {
+            headers: {
+                token: `Bearer ${refreshToken}`,
+            },
+        })
+        return res.data
+
+    } catch (error) {
+        console.error('Không thể load refresh_token:', error);
+    }
+
 
 }
+
 
 export const logOutUser = async () => {
     try {

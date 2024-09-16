@@ -54,8 +54,7 @@ const ReloadZaloPaySuccessPage = () => {
         queryFn: fetchZaloPaySuccess,
         enabled: !!app_trans_id,
     });
-    const { isPending: isPendingZaloPay, data: dataOrderZaloPay } = queryOrder;
-    console.log('Order', dataOrderZaloPay);
+    const { isPending: isPendingZaloPay } = queryOrder;
 
     const createOrder = (sendOrder) => {
         setIsOpenLoadingZalo(true);
@@ -147,8 +146,7 @@ const ReloadZaloPaySuccessPage = () => {
             rests.shippingPrice == null ||
             rests.totalPrice == null ||
             !rests.user ||
-            rests.isPaid == null ||
-            (dataOrderZaloPay.return_code === 1 && dataOrderZaloPay.is_processing === false)
+            rests.isPaid == null
         ) {
             console.error('Thiếu thông tin cần thiết để tạo đơn hàng');
             return Promise.reject('Dữ liệu không đầy đủ');
